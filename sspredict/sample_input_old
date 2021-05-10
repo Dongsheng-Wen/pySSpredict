@@ -1,0 +1,11 @@
+MnFeCoNiAl
+increment: 10
+strain_r: 0.001
+temperature: 300
+element: Mn-Co, Fe-Ni,Al
+ratio: 1-1,1-2,1
+data:
+Mn,Fe,Co,Ni,Al
+12.60,12.09,11.12,10.94,16.472
+338.84,26.375,262.89,199.1,65.498
+130.52,8.9429,101.66,76.0,23.922

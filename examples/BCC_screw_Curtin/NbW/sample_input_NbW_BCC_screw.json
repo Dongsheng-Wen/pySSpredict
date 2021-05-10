@@ -1,0 +1,27 @@
+{
+    "material":"Nb85W15",
+    "model":"BCC_screw_Maresca-Curtin-2019",
+    "properties":{
+        "a": 3.275,
+        "E_k": 0.6798, 
+        "E_v": 3.076,
+        "E_si": 5.897,
+        "Delta_E_p": 0.0732,  
+        "Delta_V_p": 0.0205
+    },
+    "conditions":{
+        "temperature":{
+            "max":500,
+            "min":0,
+            "inc":10
+        },
+        "strain_r":0.001
+    },
+    "adjustables":{
+        "kink_width":10,
+        "Delta_V_p_scaler":1,
+        "Delta_E_p_scaler":1
+    },
+    "savefile":"Nb85W15_out"
+}
+

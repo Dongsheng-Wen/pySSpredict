@@ -1,0 +1,38 @@
+{
+    "material":"TiNbZr",
+    "model":"BCC_screw_Suzuki_RWASM-2020",
+    "pseudo-ternary":{
+    "increment": 5,
+    "psA": {"grouped_elements":["Nb"],
+            "ratio": [1],
+            "range":[0,100]},
+    "psB": {"grouped_elements":["Ti"],
+            "ratio": [1],
+            "range":[0,100]},
+    "psC": {"grouped_elements":["Zr"],
+            "ratio": [1],
+            "range":[0,100]}
+    },
+    "elements":{
+        "Nb": {"a":3.30,"G":38,"nu":0.40,"E_w":0.054 ,"E_f_v":2.99,"E_f_si":5.25},
+        "Ti": {"a":3.31,"G":44,"nu":0.32,"E_w":-0.028,"E_f_v":2.22,"E_f_si":2.4},
+        "Zr": {"a":3.58,"G":33,"nu":0.34,"E_w":-0.053,"E_f_v":1.80,"E_f_si":3.5}
+    },
+    "conditions":{
+        "temperature":300,
+        "strain_r":0.001
+    },
+    "adjustables":{
+        "kink_width":10,
+        "tau_i_exponent":1,
+        "dislocation_density":4e13,
+        "trial_kappa":{
+            "min":1,
+            "max":4,
+            "inc":0.05         
+        },
+        "trial_tau_k":5
+    },
+    "savefile":"TiNbZr_Suzuki_Ternary_out"
+}
+

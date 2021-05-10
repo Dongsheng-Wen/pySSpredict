@@ -1,0 +1,27 @@
+{
+    "material":"Ti33Nb33Zr33",
+    "model":"BCC_screw_Maresca-Curtin-2019",
+    "properties":{
+        "a": 3.393,
+        "E_k": 0.255, 
+        "E_v": 1.868,
+        "E_si": 3.535,
+        "Delta_E_p": 0.0710,  
+        "Delta_V_p": 0.0107
+    },
+    "conditions":{
+        "temperature":{
+            "max":1200,
+            "min":0,
+            "inc":10
+        },
+        "strain_r":0.001
+    },
+    "adjustables":{
+        "kink_width":10,
+        "Delta_V_p_scaler":1,
+        "Delta_E_p_scaler":1
+    },
+    "savefile":"TiNbZr_out"
+}
+

@@ -1,0 +1,34 @@
+
+{
+    "material":"MnFeCoNiAl",
+    "structure":"FCC",
+    "pseudo-ternary":{
+        "increment": 10,
+        "psA": {"grouped_elements":["Mn","Co"],
+                "ratio": [1,1],
+                "range":[0,100]},
+        "psB": {"grouped_elements":["Fe","Ni"],
+                "ratio": [1,1],
+                "range":[0,100]},
+        "psC": {"grouped_elements":["Al"],
+                "ratio": [1],
+                "range":[0,100]}
+    },
+    "elements":{
+        "Co": {"Vn":11.12,"E":262.9,"G":101.7,"nu":0.292},
+        "Ni": {"Vn":10.94,"E":199.1,"G":76.0,"nu":0.309},
+        "Al": {"Vn":16.472,"E":65.5,"G":23.9,"nu":0.369},
+        "Mn": {"Vn":12.60,"E":197.7,"G":73.4,"nu":0.347},
+        "Fe": {"Vn":12.09,"E":194.3,"G":73.4}
+    },
+    "uncertainty_level":{
+        "on/off":"on",
+        "a":0.01, 
+        "elastic_constants":0.05
+    },
+    "conditions":{"temperature":300,"strain_r":0.001},
+    "model":{
+        "name":"FCC_Varvenne-Curtin-2016"
+    },
+    "savefile":"MnFeCoNiAl_out"
+}

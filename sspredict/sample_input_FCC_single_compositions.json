@@ -1,0 +1,36 @@
+{
+    "material":"MnFeCoNi",
+    "structure":"FCC",
+    "elements":{
+        "Co": {"Vn":11.12,"E":262.9,"G":101.7,"nu":0.292},
+        "Ni": {"Vn":10.94,"E":199.1,"G":76.0,"nu":0.309},
+        "Mn": {"Vn":12.60,"E":197.7,"G":73.4,"nu":0.347},
+        "Fe": {"Vn":12.09,"E":194.3,"G":73.4}
+    },
+    "compositions":{
+        "element_order": ["Co","Ni","Fe","Mn"],
+        "concentrations": [
+            [25,25,25,25],
+            [20,20,30,30],
+            [30,30,20,20]
+        ]
+
+    },
+    "uncertainty_level":{
+        "on/off":"on",
+        "a":0.01, 
+        "elastic_constants":0.05
+    },
+    "conditions":{
+        "temperature":{
+            "min": 0,
+            "max": 600,
+            "inc": 10
+        },
+        "strain_r":0.001
+    },
+    "model":{
+        "name":"FCC_Varvenne-Curtin-2016"
+    },
+    "savefile":"MnFeCoNi_out"
+}

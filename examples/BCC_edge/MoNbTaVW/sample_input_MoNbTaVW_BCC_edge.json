@@ -1,0 +1,37 @@
+
+{
+    "material":"MoNbTaVW",
+    "structure":"BCC",
+    "elements":{
+        "Mo": {"Vn":15.443,"G":92,"nu":0.433},
+        "Nb": {"Vn":17.645,"G":92,"nu":0.433},
+        "Ta": {"Vn":17.970,"G":92,"nu":0.433},
+        "V": {"Vn":14.852,"G":92,"nu":0.433},
+        "W": {"Vn":16.066,"G":92,"nu":0.433}
+    },
+    "compositions":{
+        "element_order": ["Mo","Nb","Ta","V","W"],
+        "concentrations": [
+            [20,20,20,20,20]
+        ]
+
+    },
+    "uncertainty_level":{
+        "on/off":"on",
+        "a":0.01, 
+        "elastic_constants":0.05
+    },
+    "conditions":{
+        "temperature":{
+            "min": 0,
+            "max": 1800,
+            "inc": 100
+        },
+        "strain_r":0.001
+    },
+    "model":{
+        "name":"BCC_edge_Maresca-Curtin-2019",
+        "alpha":0.0833
+    },
+    "savefile":"MoNbTaVW_selected_out"
+}
