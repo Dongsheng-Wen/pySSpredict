@@ -26,7 +26,13 @@
         "a":0.01, 
         "elastic_constants":0.05
     },
-    "conditions":{"temperature":300,"strain_r":0.001},
+    "conditions":{
+        "temperature":{
+            "min": 300,
+            "max": 400,
+            "inc": 100
+        },
+        "strain_r":0.001},
     "model":{
         "name":"FCC_Varvenne-Curtin-2016"
     },

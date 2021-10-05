@@ -1,0 +1,23 @@
+{"elements":
+    {
+        "Co": {"structure":"fcc","Vn":11.12,"E":262.9,"G":101.7,"nu":0.292,"source":"Literature"},
+        "Ni": {"structure":"fcc","Vn":10.94,"E":199.1,"G":76.0,"nu":0.309,"source":"Literature"},
+        "Al": {"structure":"fcc","Vn":16.472,"E":65.5,"G":23.9,"nu":0.369,"source":"MP"},
+        "Mn": {"structure":"fcc","Vn":12.60,"E":197.7,"G":73.4,"nu":0.347,"source":"Literature"},
+        "Fe": {"structure":"fcc","Vn":12.09,"E":194.3,"G":73.4,"source":"Literature"},
+        "Mo": {"structure":"bcc","a":3.14,"G":126,"nu":0.29,"E_w_i":0.054, "Delta_E_p":0.1579,"E_k":0.5251,"E_f_v":2.9607,"E_f_si":7.3792,"Delta_V_p":0.020,"source":"Literature"},
+        "W":  {"structure":"bcc","a":3.16,"G":147,"nu":0.29,"E_w_i":0.054, "Delta_E_p":0.1493,"E_k":0.9057,"E_f_v":3.5655,"E_f_si":9.5417,"Delta_V_p":0.020,"source":"Literature"},
+        "Nb": {"structure":"bcc","a":3.30,"G":38,"nu":0.40,"E_w_i":0.054 ,"E_f_v":2.99,"E_f_si":5.25,"Delta_E_p":0.0345,"E_k":0.6400,"Delta_V_p":0.020,"source":"Literature"},
+        "Ti": {"structure":"bcc","a":3.31,"G":44,"nu":0.32,"E_w_i":-0.028,"E_f_v":2.22,"E_f_si":2.4,"source":"Literature"},
+        "Zr": {"structure":"bcc","a":3.58,"G":33,"nu":0.34,"E_w_i":-0.053,"E_f_v":1.80,"E_f_si":3.5,"source":"Literature"},
+        "Fe95Si5":{"structure":"bcc", "a":2.864,"Delta_E_p":0.0398,"E_k":0.4932,"E_f_v":2.22,"E_f_si":5.1,"Delta_V_p":0.0066,"source":"Literature"},
+        "Fe94Si6":{"structure":"bcc", "a":2.864,"Delta_E_p":0.043,"E_k":0.4932,"E_f_v":2.22,"E_f_si":5.1,"Delta_V_p":0.0059,"source":"Literature"},
+        "Fe92Si8":{"structure":"bcc", "a":2.861,"Delta_E_p":0.0505,"E_k":0.4932,"E_f_v":2.22,"E_f_si":5.1,"Delta_V_p":0.0039,"source":"Literature"},
+        "Fe917Si83":{"structure":"bcc", "a":2.861,"Delta_E_p":0.0514,"E_k":0.4932,"E_f_v":2.22,"E_f_si":5.1,"Delta_V_p":0.0037,"source":"Literature"},
+        "Nb95Mo5":{"structure":"bcc", "a":3.289,"Delta_E_p":0.0488,"E_k":0.6342,"E_f_v":2.989,"E_f_si":5.361,"Delta_V_p":0.02,"source":"Literature"},
+        "Nb75Mo25":{"structure":"bcc", "a":3.250,"Delta_E_p":0.0847,"E_k":0.6112,"E_f_v":2.983,"E_f_si":5.794,"Delta_V_p":0.02,"source":"Literature"},
+        "Nb85W15":{"structure":"bcc", "a":3.275,"Delta_E_p":0.0732,"E_k":0.6798,"E_f_v":3.076,"E_f_si":5.897,"Delta_V_p":0.0205,"source":"Literature"},
+        "TiNbZr": {"structure":"bcc", "a":3.393,"Delta_E_p":0.071,"E_k":0.255,"E_f_v":1.868,"E_f_si":3.535,"Delta_V_p":0.0107,"source":"Literature"},
+        "Ti66Nb17Zr17": {"structure":"bcc", "a":3.34,"Delta_E_p":0.0568,"E_k":0.257,"E_f_v":1.613,"E_f_si":3.267,"Delta_V_p":0.0009,"source":"Literature"}
+    }
+}

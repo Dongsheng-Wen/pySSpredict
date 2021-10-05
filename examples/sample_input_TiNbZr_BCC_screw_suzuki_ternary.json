@@ -14,12 +14,20 @@
             "range":[0,100]}
     },
     "elements":{
-        "Nb": {"a":3.30,"G":38,"nu":0.40,"E_w":0.054 ,"E_f_v":2.99,"E_f_si":5.25},
-        "Ti": {"a":3.31,"G":44,"nu":0.32,"E_w":-0.028,"E_f_v":2.22,"E_f_si":2.4},
-        "Zr": {"a":3.58,"G":33,"nu":0.34,"E_w":-0.053,"E_f_v":1.80,"E_f_si":3.5}
+        "Nb": {"a":3.30,"G":38,"nu":0.40,"E_w_i":0.054 ,"E_f_v":2.99,"E_f_si":5.25},
+        "Ti": {"a":3.31,"G":44,"nu":0.32,"E_w_i":-0.028,"E_f_v":2.22,"E_f_si":2.4},
+        "Zr": {"a":3.58,"G":33,"nu":0.34,"E_w_i":-0.053,"E_f_v":1.80,"E_f_si":3.5}
+    },
+    "TC_data":{
+        "T_liquidus": "NbTiZr_TCHEA4.csv",
+        "TC_database": "TCHEA4"
     },
     "conditions":{
-        "temperature":300,
+        "temperature":{
+            "max":1200,
+            "min":1000,
+            "inc":100
+        },
         "strain_r":0.001
     },
     "adjustables":{
@@ -27,9 +35,9 @@
         "tau_i_exponent":1,
         "dislocation_density":4e13,
         "trial_kappa":{
-            "min":1,
+            "min":1.5,
             "max":4,
-            "inc":0.05         
+            "inc":0.5       
         },
         "trial_tau_k":5
     },

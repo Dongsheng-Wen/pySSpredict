@@ -14,16 +14,23 @@
                 "range":[0,100]}
     },
     "elements":{
-        "Nb": {"a":3.30,"Delta_E_p":0.0345,"E_k":0.6400,"E_v":2.9899,"E_si":5.2563,"Delta_V_p":0.020},
-        "Mo": {"a":3.14,"Delta_E_p":0.1579,"E_k":0.5251,"E_v":2.9607,"E_si":7.3792,"Delta_V_p":0.020},
-        "W": {"a":3.16,"Delta_E_p":0.1493,"E_k":0.9057,"E_v":3.5655,"E_si":9.5417,"Delta_V_p":0.020}
+        "Nb": {"a":3.30,"Delta_E_p":0.0345,"E_k":0.6400,"E_f_v":2.9899,"E_f_si":5.2563,"Delta_V_p":0.020},
+        "Mo": {"a":3.14,"Delta_E_p":0.1579,"E_k":0.5251,"E_f_v":2.9607,"E_f_si":7.3792,"Delta_V_p":0.020},
+        "W": {"a":3.16,"Delta_E_p":0.1493,"E_k":0.9057,"E_f_v":3.5655,"E_f_si":9.5417,"Delta_V_p":0.020}
     },
     "adjustables":{
         "kink_width":10,
         "Delta_V_p_scaler":1,
         "Delta_E_p_scaler":1
     },
-    "conditions":{"temperature":300,"strain_r":0.001},
+    "conditions":{
+        "temperature":{
+            "min": 300,
+            "max": 600,
+            "inc": 150
+        },
+        "strain_r":0.001
+    },
     "model":{
         "name":"BCC_screw_Maresca-Curtin-2019"
     },
