@@ -35,7 +35,14 @@ Sample JSON for using pseudo-ternary predictions of solid solution strength by C
         "a":0.01, 
         "elastic_constants":0.05
     },
-    "conditions":{"temperature":300,"strain_r":0.001},
+    "conditions":{
+        "temperature":{
+            "min": 300,
+            "max": 600,
+            "inc": 10
+        },
+        "strain_r":0.001
+    },
     "model":{
         "name":"FCC_Varvenne-Curtin-2016"
     },
@@ -69,7 +76,10 @@ Nesessary tags:
         # Need to specify 2 of the "E", "G", and "nu" for isotropic.
 --
 "conditions": experimental conditions
-    "temperature": Kelvin
+    "temperature": specify temperature (Kelvin) range and increment for the calculations.
+        "max":  max T
+        "min":  min T
+        "inc":  increment. 
     "strain_r": experiment strain rate, 
                 typical tensile tests: 0.001 /s
 --
@@ -117,7 +127,7 @@ Optional tags:
     
 END
 ''')
-        elif self.tag =='FCC_BCC_Edge_Composition_Temperature':
+        elif self.tag =='FCC_BCC_Edge':
             print('''
 Sample JSON for composition-temperature predictions of solid solution strength by Curtin edge dislocation model. 
 ------------------------------------------------------------
@@ -260,7 +270,14 @@ Screw dislocation in BCC.
         "Delta_V_p_scaler":1,
         "Delta_E_p_scaler":1
     },
-    "conditions":{"temperature":300,"strain_r":0.001},
+    "conditions":{
+        "temperature":{
+            "min": 300,
+            "max": 600,
+            "inc": 10
+        },
+        "strain_r":0.001
+    },
     "model":{
         "name":"BCC_screw_Maresca-Curtin-2019"
     },
@@ -286,18 +303,22 @@ Nesessary tags:
         "E_k":              screw dislocation kink formation energy (usually by DFT or MD calculations)
         "E_v":              vacancy formation energy (usually by DFT or MD)
         "E_si":             self-interstitial formation energy (usually by DFT or MD)
-        "Delta_E_p":        solute-dislocation interaction energy (usually by DFT or MD)
+        "Delta_E_p":        characteristic energy fluctuation due to solute-dislocation interaction (usually by DFT or MD)
+                            # should not be confused with solute-dislocation interaction energy. 
         "Delta_V_p":        Peierls barrier (usually by DFT or MD)
 --
 "adjustables": adjustable parameters for the model. Be VERY careful to change the values.
     "kink_width":10          kink width, default is 10, (unit: burgers vector), usually between 10b to 20b. 
     "Delta_V_p_scaler":1,    Peierls barrier scaler, DFT values are usually very high compared to experiments.
                              So rescaling was taken to fit the experimental yield strengths.
-    "Delta_E_p_scaler":1     Solute-dislocation interaction energy scaler.
+    "Delta_E_p_scaler":1     Solute-dislocation interaction scaler.
                              This is also rescaled for DFT/MD values. 
 --
 "conditions": experimental conditions
-    "temperature": specify temperature (Kelvin) the calculations.
+    "temperature": specify temperature (Kelvin) range and increment for the calculations.
+        "max":  max T
+        "min":  min T
+        "inc":  increment. 
     "strain_r":    experiment strain rate, 
                    typical tensile tests: 0.001 /s
 --
@@ -308,9 +329,9 @@ Optional tags:
 
 END
 ''')
-        elif self.tag =='BCC_Screw_Curtin_Composition_Temperature':
+        elif self.tag =='BCC_Screw_Curtin':
             print('''
-Sample JSON for composition-temperature predictions of BCC solid solution strength by Curtin screw dislocation model. 
+Sample JSON for predictions of selected compositions/temperatures BCC solid solution strength by Curtin screw dislocation model. 
 Screw dislocation in BCC. 
 ------------------------------------------------------------
 {
@@ -349,7 +370,8 @@ Nesessary tags:
     "E_k":              screw dislocation kink formation energy (usually by DFT or MD calculations)
     "E_v":              vacancy formation energy (usually by DFT or MD)
     "E_si":             self-interstitial formation energy (usually by DFT or MD)
-    "Delta_E_p":        solute-dislocation interaction energy (usually by DFT or MD)
+    "Delta_E_p":        characteristic energy fluctuation due to solute-dislocation interaction (usually by DFT or MD)
+                            # should not be confused with solute-dislocation interaction energy. 
     "Delta_V_p":        Peierls barrier (usually by DFT or MD)
 --
 "conditions": experimental conditions
@@ -364,7 +386,7 @@ Nesessary tags:
     "kink_width":10          kink width, default is 10, (unit: burgers vector), usually between 10b to 20b. 
     "Delta_V_p_scaler":1,    Peierls barrier scaler, DFT values are usually very high compared to experiments.
                              So rescaling was taken to fit the experimental yield strengths.
-    "Delta_E_p_scaler":1     Solute-dislocation interaction energy scaler.
+    "Delta_E_p_scaler":1     Solute-dislocation interaction scaler.
                              This is also rescaled for DFT/MD values. 
 --
 "model": "BCC_screw_Maresca-Curtin-2019", 
@@ -374,7 +396,7 @@ Optional tags:
 
 END
 ''')
-        elif self.tag =='BCC_Screw_Suzuki_Temperature':
+        elif self.tag =='BCC_Screw_Suzuki':
             print('''
 Sample JSON for predictions of solid solution strength vs. temperature for BCC by Suzuki screw dislocation model. 
 Screw dislocation in BCC. 
@@ -383,14 +405,27 @@ Screw dislocation in BCC.
     "material":"Ti33Nb33Zr33",
     "model":"BCC_screw_Suzuki_RWASM-2020",
     "elements":{
-        "Nb": {"c":0.34,"a":3.30,"G":38,"nu":0.40,"E_w":0.054 ,"E_f_v":2.99,"E_f_si":5.25},
-        "Ti": {"c":0.33,"a":3.31,"G":44,"nu":0.32,"E_w":-0.028,"E_f_v":2.22,"E_f_si":2.4},
-        "Zr": {"c":0.33,"a":3.58,"G":33,"nu":0.34,"E_w":-0.053,"E_f_v":1.80,"E_f_si":3.5}
+        "Nb": {"a":3.30,"G":38,"nu":0.40,"E_w_i":0.054 ,"E_f_v":2.99,"E_f_si":5.25},
+        "Ti": {"a":3.31,"G":44,"nu":0.32,"E_w_i":-0.028,"E_f_v":2.22,"E_f_si":2.4},
+        "Zr": {"a":3.58,"G":33,"nu":0.34,"E_w_i":-0.053,"E_f_v":1.80,"E_f_si":3.5},
+        "SI": {"a":3.39,"G":33,"nu":0.34,"E_w_i":0.5,"E_f_v":3,"E_f_si":5}
+    },
+    "compositions":{
+        "element_order": ["Nb","Ti","Zr","SI"],
+        "concentrations": [
+            [34,33,33,0.54],
+            [33,33,33,0.54],
+            [33.4,33,33,0.54]
+        ]
+
+    },
+    "jog_drag_inputs":{
+        "T_l": [1961,"nan"]
     },
     "conditions":{
         "temperature":{
-            "max":1400,
-            "min":300,
+            "max":1473,
+            "min":273,
             "inc":200
         },
         "strain_r":0.001
@@ -402,7 +437,7 @@ Screw dislocation in BCC.
         "trial_kappa":{
             "min":1,
             "max":4,
-            "inc":0.05         
+            "inc":0.5         
         },
         "trial_tau_k":5
     },
@@ -415,13 +450,24 @@ Nesessary tags:
 "elements": input data for elements: 
     "Nb": element symbol for Nb
         below are necessary inputs. 
-        "c":                concentration in at.%
         "a":                lattice constant
-        "E_w":              solute-dislocation interaction (usually by DFT or MD calculations)
+        "E_w_i":            solute-dislocation interaction energy (usually by DFT or MD calculations)
         "E_f_v":            vacancy formation energy (usually by DFT or MD)
         "E_f_si":           self-interstitial formation energy (usually by DFT or MD)
         "G":                shear modulus
         "nu":               Poisson ratio
+--
+"compositions": containing element symbols and concentrations for calculation. 
+    "element_order":  a list of element symbols in order, be consistent with the "concentrations"
+    "concentrations": a list of concentrations in at.% for elements in the "element_order", 
+                      add up to 100.
+
+--
+"jog_drag_inputs": to activate high-temperature jog-dragging mode by specifying the liquidus temperature.
+    "T_l":                   A list containing the liquidus temperatures corresponding to the alloy compositions.
+                             Expect high-T jog mode activated above about 0.5*T_l. No need to specify this for lower 
+                             temperature calculations. For details of the activation criteria, see their paper. 
+
 --
 "adjustables": adjustable parameters for the model. Be VERY careful to change the values.
     "kink_width":10          kink width, default is 10, (unit: burgers vector), 
@@ -522,7 +568,7 @@ Nesessary tags:
     "Nb": element symbol for Nb
         below are necessary inputs. 
         "a":                lattice constant
-        "E_w":              solute-dislocation interaction (usually by DFT or MD calculations)
+        "E_w_i":            solute-dislocation interaction energy (usually by DFT or MD calculations)
         "E_f_v":            vacancy formation energy (usually by DFT or MD)
         "E_f_si":           self-interstitial formation energy (usually by DFT or MD)
         "G":                shear modulus
@@ -567,9 +613,9 @@ END
 
         else:
             print('NOT a valid name. Available input formats: \n'
+                             'FCC_BCC_Edge\n'
                              'FCC_BCC_Edge_Ternary\n'
-                             'FCC_BCC_Edge_Composition_Temperature\n'
+                             'BCC_Screw_Curtin\n'
                              'BCC_Screw_Curtin_Ternary\n'
-                             'BCC_Screw_Curtin_Composition_Temperature\n'
-                             'BCC_Screw_Suzuki_Temperature\n'
+                             'BCC_Screw_Suzuki\n'
                              'BCC_Screw_Suzuki_Ternary\n')

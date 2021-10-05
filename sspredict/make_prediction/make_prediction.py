@@ -35,13 +35,13 @@ class make_prediction:
             comp_pst, comp_elements = mesh.comp_assign()
             if input_data.uncertainty_levels == [0,0]:
                 self.model = ss_edge_model(input_data.dislocation_properties,input_data.exp_conditions,
-                            comp_elements,comp_pst,input_data.element_data,input_data.structure)
+                            comp_elements,comp_pst,input_data.elements_data,input_data.structure)
             else: 
                 self.model = ss_edge_model_w_uncertainty(ss_edge_model,input_data.dislocation_properties,
-                            input_data.exp_conditions,comp_elements,comp_pst,input_data.element_data,
+                            input_data.exp_conditions,comp_elements,comp_pst,input_data.elements_data,
                             input_data.uncertainty_levels,input_data.structure)
 
-        elif self.m.mode == "edge_single_calculation":
+        elif self.m.mode == "edge_single":
             print('---------Start Calculation for Selected Compositions----------')
             print('------------------Use Edge Dislocation Model------------------')
             input_data = read_inputjson_edge_single_calculation(self.inputfilename)
@@ -50,11 +50,11 @@ class make_prediction:
             self.input_data = input_data
             if input_data.uncertainty_levels == [0,0]:
                 self.model = ss_edge_model_T(input_data.dislocation_properties,input_data.exp_conditions,
-                            input_data.element_composition,input_data.element_data,input_data.structure)
+                            input_data.element_composition,input_data.elements_data,input_data.structure)
             else: 
                 self.model = ss_edge_model_T_w_uncertainty(ss_edge_model_T,input_data.dislocation_properties,
                             input_data.exp_conditions,input_data.element_composition,
-                            input_data.element_data,input_data.uncertainty_levels,input_data.structure)
+                            input_data.elements_data,input_data.uncertainty_levels,input_data.structure)
 
         elif self.m.mode == "screw_ternary":
             print('-------------Start Calculation for Ternary--------------')
@@ -68,21 +68,24 @@ class make_prediction:
             comp_pst, comp_elements = mesh.comp_assign()
             self.model = ss_model_M_C_screw_pseudo_ternary(input_data,comp_elements,comp_pst)
 
-        elif self.m.mode == "screw_single_calculation":
+        elif self.m.mode == "screw_single":
             print('---------Start Calculation for Selected Compositions----------')
             print('---------------Use BCC-Screw Dislocation Model----------------')
             input_data = read_inputjson_BCC_screw_single_calculation(self.inputfilename)
             self.input_data = input_data
             self.model = ss_model_M_C_screw(input_data)
 
-        elif self.m.mode ==  "screw_suzuki_single_calculation":
+        elif self.m.mode ==  "screw_suzuki_single":
             print('---------Start Calculation for Selected Compositions----------')
             print('------------Use Suzuki-BCC-Screw Dislocation Model------------')
             input_data = read_json_Suzuki_model_RWASM_T(self.inputfilename)
             self.input_data = input_data
-            self.model = Suzuki_model_RWASM_T(input_data.element_data,input_data.experiment_conditions,
-                                         input_data.adjustable_scalers)
-        elif self.m.mode ==  "screw_suzuki_ternary_calculation":
+            self.model = Suzuki_model_RWASM_jog_T(input_data.adjustable_scalers,
+                                        input_data.conditions,
+                                        input_data.element_composition,
+                                        input_data.elements_data,
+                                        T_l=input_data.T_l)
+        elif self.m.mode ==  "screw_suzuki_ternary":
             print('-------------Start Calculation for Ternary--------------')
             print('---------Use Suzuki-BCC-Screw Dislocation Model---------')
             input_data = read_json_Suzuki_model_RWASM_ternary(self.inputfilename)
@@ -92,8 +95,16 @@ class make_prediction:
                           input_data.psA_ratio,input_data.psB_ratio,input_data.psC_ratio)
             comp_tmp = mesh.make_mesh()
             comp_pst, comp_elements = mesh.comp_assign()
-            self.model = Suzuki_model_RWASM_ternary(input_data.element_data,comp_elements,comp_pst,
-                          input_data.experiment_conditions,input_data.adjustable_scalers)
+            # use tc_liquidus_wrapper if specified
+            if self.input_data.T_l_tag == "tc_liquidus_wrapper":
+                # will need to run this on HPC
+                try: 
+                    from make_prediction.tc_liquidus_wrapper import liquidus_wrapper
+                except:
+                    from .tc_liquidus_wrapper import liquidus_wrapper
+                    
+                self.model = Suzuki_model_RWASM_ternary(input_data,comp_elements,comp_pst,
+                                                        T_l = input_data.T_l)
         else: 
             print('invalid inputs. Please use valid format. check --help and --format')
 
@@ -102,14 +113,11 @@ class make_prediction:
         print('-------------Running--------------')
         self.model.calculate()
         print('---------------Done----------------')
-        self.model.writedata()
-        print('-------------------------------Predicted Data-------------------------------')
-        print(self.model.calc_data.reset_index(drop=True))
     def writeoutput(self):
-        self.model.calc_data.to_csv(self.outputfile,index=False,sep='\t',float_format='%.2f')
-        print('-------------------------------Data Saved to {}-------------------------------'.format(self.outputfile))
-
-        if self.m.mode == "screw_suzuki_single_calculation":
+        if "ternary" in self.m.mode:
+            self.model.writedata(self.outputfile)
+        
+        if self.m.mode == "screw_suzuki_single":
             # write additional data to check convergence
             print('-------------------------------Additional Data for Suzuki Model-------------------------------')
             print('--------------------------Use this to check yield stress convergence--------------------------')

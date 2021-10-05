@@ -22,11 +22,11 @@ def main():
                         required=False,
                         help='Use this tag to check general input JSON format for different models.\n'
                              'Available input formats: \n'
+                             'FCC_BCC_Edge\n'
                              'FCC_BCC_Edge_Ternary\n'
-                             'FCC_BCC_Edge_Composition_Temperature\n'
+                             'BCC_Screw_Curtin\n'
                              'BCC_Screw_Curtin_Ternary\n'
-                             'BCC_Screw_Curtin_Composition_Temperature\n'
-                             'BCC_Screw_Suzuki_Temperature\n'
+                             'BCC_Screw_Suzuki\n'
                              'BCC_Screw_Suzuki_Ternary\n')
     args = parser.parse_args()
 
