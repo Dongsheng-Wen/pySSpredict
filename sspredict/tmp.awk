@@ -1,1 +1,0 @@
-BEGIN {OFMT="%.8g"; CONVFMT=OFMT; obrace="{"; cbrace="}"; 
