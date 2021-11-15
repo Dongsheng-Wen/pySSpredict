@@ -1,16 +1,17 @@
 from setuptools import setup
 
-#name1 = 'sspredict_local.plot = sspredict.plot_ss_ternary:main'
-name1 = 'sspredict.predict = sspredict.master:main'
+name1 = 'pysspredict.predict = src.sspredict.master:main'
 
 setup(
-    name='SSPredict',
+    name='pySSPredict',
     version='v1.1.0',
     license ='MIT',
     author='Dongsheng Wen, Michael S. Titus',
     author_email='wen94@purdue.edu, titus9@purdue.edu',
     description='Python-based Solid-Solution Strengthening Prediction Tool',
     packages = ['sspredict','sspredict/make_prediction'],
+    package_dir = {'sspredict':'src/sspredict',
+          'sspredict/make_prediction':'src/sspredict/make_prediction'},
     entry_points={
           'console_scripts': [name1]
       },
