@@ -1,0 +1,6 @@
+#!/bin/sh
+
+/usr/bin/invoke_app "$@" -C "start_jupyter -t -T @tool pysspredict_introduction.ipynb" \
+                         -t pySSpredict \
+                         -u anaconda4-10.3
+
