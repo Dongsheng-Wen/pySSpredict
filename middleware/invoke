@@ -2,5 +2,5 @@
 
 /usr/bin/invoke_app "$@" -C "start_jupyter -t -T @tool pysspredict_introduction.ipynb" \
                          -t pysspredict \
-                         -u anaconda4-10.3
+                         -u anaconda-6
 
