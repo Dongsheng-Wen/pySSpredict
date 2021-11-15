@@ -1,2 +1,0 @@
-sspredict
-sspredict/make_prediction

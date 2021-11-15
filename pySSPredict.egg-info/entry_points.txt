@@ -1,3 +1,0 @@
-[console_scripts]
-pysspredict.predict = src.sspredict.master:main
-
