@@ -1,6 +1,6 @@
 from setuptools import setup
 
-name1 = 'pysspredict.predict = src.sspredict.master:main'
+name1 = 'pysspredict.predict = bin.sspredict.master:main'
 
 setup(
     name='pySSPredict',
@@ -10,8 +10,8 @@ setup(
     author_email='wen94@purdue.edu, titus9@purdue.edu',
     description='Python-based Solid-Solution Strengthening Prediction Tool',
     packages = ['sspredict','sspredict/make_prediction'],
-    package_dir = {'sspredict':'src/sspredict',
-          'sspredict/make_prediction':'src/sspredict/make_prediction'},
+    package_dir = {'sspredict':'bin/sspredict',
+          'sspredict/make_prediction':'bin/sspredict/make_prediction'},
     entry_points={
           'console_scripts': [name1]
       },
