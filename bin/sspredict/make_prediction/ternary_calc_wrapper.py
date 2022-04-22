@@ -173,9 +173,22 @@ class ternary_calc_strength:
         self.T_l = (self.T_l_calculator.T_liquidus)
         print('Liquidus Temperature: {} K.'.format(self.T_l))
 
+    def calc_phase_diagram(self,elements,temperature):
+        try:
+            from make_prediction.tc_isothermo_wrapper import ternary_isothermal_pd
+        except:
+            from .tc_isothermo_wrapper import ternary_isothermal_pd
+
+        temperature = 1169
+        self.ternary_pd_calc = ternary_isothermal_pd(elements,temperature)
+        self.ternary_pd_calc.calc_diagram()
+        self.ternary_pd_calc.make_diagram_data()
+        self.pd_data = self.ternary_pd_calc.pd_data
+        
+
     def set_adjustables(self,
                         f1=None,f2=None,alpha=None, # edge models
-                        kink_width=None,Delta_V_p_scaler=None,Delta_E_p_scaler=None,# MC screw model
+                        kink_width=None,Delta_V_p_para=None,Delta_E_p_para=None,# MC screw model
                         tau_i_exponent=None,dislocation_density=None,trial_kappa=None,trial_tau_k=None # Suzuki screw model
                         ):
         # make_adjustables: read_input.make_adjustables
@@ -185,7 +198,7 @@ class ternary_calc_strength:
         # value = dict containing parameters
         adjustables_hd = make_adjustables(self.ssmodels,
                         f1=f1,f2=f2,alpha=alpha, # edge models
-                        kink_width=kink_width,Delta_V_p_scaler=Delta_V_p_scaler,Delta_E_p_scaler=Delta_E_p_scaler,# MC screw model
+                        kink_width=kink_width,Delta_V_p_para=Delta_V_p_para,Delta_E_p_para=Delta_E_p_para,# MC screw model
                         tau_i_exponent=tau_i_exponent,dislocation_density=dislocation_density,trial_kappa=trial_kappa,trial_tau_k=trial_tau_k # Suzuki screw model
                         )
         self.adjustables = adjustables_hd.adjustables

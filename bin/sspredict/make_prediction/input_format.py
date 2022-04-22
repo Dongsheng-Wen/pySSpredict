@@ -267,8 +267,8 @@ Screw dislocation in BCC.
     },
     "adjustables":{
         "kink_width":10,
-        "Delta_V_p_scaler":1,
-        "Delta_E_p_scaler":1
+        "Delta_V_p_para":1,
+        "Delta_E_p_para":1
     },
     "conditions":{
         "temperature":{
@@ -309,9 +309,9 @@ Nesessary tags:
 --
 "adjustables": adjustable parameters for the model. Be VERY careful to change the values.
     "kink_width":10          kink width, default is 10, (unit: burgers vector), usually between 10b to 20b. 
-    "Delta_V_p_scaler":1,    Peierls barrier scaler, DFT values are usually very high compared to experiments.
+    "Delta_V_p_para":1,    Peierls barrier para, DFT values are usually very high compared to experiments.
                              So rescaling was taken to fit the experimental yield strengths.
-    "Delta_E_p_scaler":1     Solute-dislocation interaction scaler.
+    "Delta_E_p_para":1     Solute-dislocation interaction para.
                              This is also rescaled for DFT/MD values. 
 --
 "conditions": experimental conditions
@@ -355,8 +355,8 @@ Screw dislocation in BCC.
     },
     "adjustables":{
         "kink_width":10,
-        "Delta_V_p_scaler":1,
-        "Delta_E_p_scaler":1
+        "Delta_V_p_para":1,
+        "Delta_E_p_para":1
     },
     "savefile":"Nb95Mo5_out"
 }
@@ -384,9 +384,9 @@ Nesessary tags:
 --
 "adjustables": adjustable parameters for the model. Be VERY careful to change the values.
     "kink_width":10          kink width, default is 10, (unit: burgers vector), usually between 10b to 20b. 
-    "Delta_V_p_scaler":1,    Peierls barrier scaler, DFT values are usually very high compared to experiments.
+    "Delta_V_p_para":1,    Peierls barrier para, DFT values are usually very high compared to experiments.
                              So rescaling was taken to fit the experimental yield strengths.
-    "Delta_E_p_scaler":1     Solute-dislocation interaction scaler.
+    "Delta_E_p_para":1     Solute-dislocation interaction para.
                              This is also rescaled for DFT/MD values. 
 --
 "model": "BCC_screw_Maresca-Curtin-2019", 

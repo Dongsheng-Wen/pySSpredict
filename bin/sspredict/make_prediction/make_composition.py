@@ -90,3 +90,61 @@ class build_mesh_ternary:
         self.comp_new = self.comp.reset_index(drop=True)
         self.comp_elements_new = self.comp_elements.reset_index(drop=True)
         return self.comp_new, self.comp_elements_new
+
+
+
+class composition_generator:
+    # most code from https://github.itap.purdue.edu/michaeltitusgroup
+    # to generate compositions for CCAs 
+    def __init__(self,step=0.05,N=4):
+        self.step = step
+        self.N = N
+        self.comps = []
+    # create static variable inside functions
+    def static_vars(**kwargs):
+        def decorate(func):
+            for k in kwargs:
+                setattr(func, k, kwargs[k])
+            return func
+
+        return decorate
+
+    # create list of numbers that the sum does not exceed y
+    @static_vars(a=[])
+    def loop_rec_gen(self,y, n):
+        if n > 1:
+            for x in range(y - sum(self.loop_rec_gen.a)):
+                self.loop_rec_gen.a.append(x)
+                for i in self.loop_rec_gen(y, n - 1):
+                    yield self.loop_rec_gen.a
+                #yield from loop_rec_gen(y, n - 1)
+                self.loop_rec_gen.a.pop()
+        else:
+            for x in range(y - sum(self.loop_rec_gen.a)):
+                self.loop_rec_gen.a.append(x)
+                yield self.loop_rec_gen.a
+                self.loop_rec_gen.a.pop()
+
+                
+    def get_all_comps(self):
+        
+        
+        if self.N >= 3:
+            for idxs in self.loop_rec_gen(int(1/self.step+1),self.N-1):
+                Nm1_comp = [round(i*self.step,3) for i in idxs]
+                comp = Nm1_comp+[round(1-sum(Nm1_comp),3)]
+                #only pass non-zero compositions, so that N always equals N
+                if 0.0 not in comp:
+                    self.comps.append(comp)
+        elif self.N == 2:
+            for idxs in self.loop_rec_gen(int(1/self.step+1),self.N-1):
+                Nm1_comp = [round(i*self.step,3) for i in idxs]
+                comp = Nm1_comp+[round(1-sum(Nm1_comp),3)]
+                self.comps.append(comp)
+        elif self.N == 1:
+            print("N = 1 is not allowed, please choose N >= 2.")
+            
+        #print(len(self.comps))
+        #return self.comps
+
+

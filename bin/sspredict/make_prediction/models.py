@@ -13,7 +13,7 @@ class ss_edge_model_T:
 # BCC model: Maresca-Curtin 2020: https://doi.org/10.1016/j.actamat.2019.10.015
 # for simeple calculations 
     def __init__(self,
-                 adjustable_scalers,
+                 adjustable_paras,
                  exp_conditions,
                  comp_elements,
                  elements_data,
@@ -21,13 +21,13 @@ class ss_edge_model_T:
         
         # dislocation properties, alpha, f1, and f2
         try:
-            self.alpha = float(adjustable_scalers[0])
-            self.f_tau = float(adjustable_scalers[1])
-            self.f_dEb = float(adjustable_scalers[2])
+            self.alpha = float(adjustable_paras[0])
+            self.f_tau = float(adjustable_paras[1])
+            self.f_dEb = float(adjustable_paras[2])
         except:
-            self.alpha = float(adjustable_scalers['alpha'])
-            self.f_tau = float(adjustable_scalers['f1'])
-            self.f_dEb = float(adjustable_scalers['f2'])
+            self.alpha = float(adjustable_paras['alpha'])
+            self.f_tau = float(adjustable_paras['f1'])
+            self.f_dEb = float(adjustable_paras['f2'])
         
         # experiment conditions, T, strain rate
         self.T_range = np.array(exp_conditions[0])
@@ -372,7 +372,7 @@ class ss_edge_model_T_w_uncertainty:
 # BCC model: Maresca-Curtin 2020: 
     def __init__(self,
                  ss_edge_model_T,
-                 adjustable_scalers,
+                 adjustable_paras,
                  exp_conditions,
                  comp_elements,
                  elements_data,
@@ -380,7 +380,7 @@ class ss_edge_model_T_w_uncertainty:
                  structure):
         
 
-        self.adjustable_scalers = adjustable_scalers
+        self.adjustable_paras = adjustable_paras
         self.exp_conditions = exp_conditions
         self.T_range = np.array(exp_conditions[0])
         self.compositions_all = comp_elements
@@ -424,7 +424,7 @@ class ss_edge_model_T_w_uncertainty:
     def calculate(self):
         
 
-        self.model = ss_edge_model_T(self.adjustable_scalers,
+        self.model = ss_edge_model_T(self.adjustable_paras,
                            self.exp_conditions,
                            self.compositions_all,
                            self.elements_data,
@@ -726,10 +726,10 @@ class ss_model_M_C_screw_pseudo_ternary:
                  compositions,comp_pst
                 ):
 
-        # adjustable scalers
-        self.kink_width = inputdata.adjustable_scalers['kink_width']  
-        self.Delta_V_p_scaler = inputdata.adjustable_scalers['Delta_V_p_scaler']  
-        self.Delta_E_p_scaler = inputdata.adjustable_scalers['Delta_E_p_scaler'] 
+        # adjustable paras
+        self.kink_width = inputdata.adjustable_paras['kink_width']  
+        self.Delta_V_p_para = inputdata.adjustable_paras['Delta_V_p_para']  
+        self.Delta_E_p_para = inputdata.adjustable_paras['Delta_E_p_para'] 
         self.comp_pst = comp_pst
         # some constants
         self.boltzmann_J = 1.38064852*10**(-23) #J/K
@@ -762,8 +762,8 @@ class ss_model_M_C_screw_pseudo_ternary:
         self.E_k = sum(cn_E_k) * self.eV2J 
         self.E_v = sum(cn_E_v) * self.eV2J 
         self.E_si = sum(cn_E_si) * self.eV2J 
-        self.Delta_E_p = np.sqrt(sum(cn_Delta_E_p)) * self.Delta_E_p_scaler * self.eV2J 
-        self.Delta_V_p = sum(cn_Delta_V_p) * self.Delta_E_p_scaler * self.eV2J /self.b
+        self.Delta_E_p = np.sqrt(sum(cn_Delta_E_p)) * self.Delta_E_p_para * self.eV2J 
+        self.Delta_V_p = sum(cn_Delta_V_p) * self.Delta_E_p_para * self.eV2J /self.b
         
         # exp conditions
         self.T_range = np.arange(inputdata.conditions['temperature']['min'],
@@ -859,10 +859,10 @@ class ss_model_M_C_screw:
                  inputdata
                 ):
 
-        # adjustable scalers
-        self.kink_width = inputdata.adjustable_scalers['kink_width']  
-        self.Delta_V_p_scaler = inputdata.adjustable_scalers['Delta_V_p_scaler']  
-        self.Delta_E_p_scaler = inputdata.adjustable_scalers['Delta_E_p_scaler'] 
+        # adjustable paras
+        self.kink_width = inputdata.adjustable_paras['kink_width']  
+        self.Delta_V_p_para = inputdata.adjustable_paras['Delta_V_p_para']  
+        self.Delta_E_p_para = inputdata.adjustable_paras['Delta_E_p_para'] 
         
         # some constants
         self.boltzmann_J = 1.38064852*10**(-23) #J/K
@@ -876,8 +876,8 @@ class ss_model_M_C_screw:
         self.b = self.a*np.sqrt(3)/2
         
         self.E_k = inputdata.properties['E_k'] * self.eV2J             # J   # kink formation energy
-        self.Delta_E_p = self.Delta_E_p_scaler * inputdata.properties['Delta_E_p'] * self.eV2J  # J   # screw-solute interaction
-        self.Delta_V_p = self.Delta_V_p_scaler * inputdata.properties['Delta_V_p'] * self.eV2J /self.b# J/b   # Peierls barrier
+        self.Delta_E_p = self.Delta_E_p_para * inputdata.properties['Delta_E_p'] * self.eV2J  # J   # screw-solute interaction
+        self.Delta_V_p = self.Delta_V_p_para * inputdata.properties['Delta_V_p'] * self.eV2J /self.b# J/b   # Peierls barrier
         
         self.E_si = inputdata.properties['E_f_si']   * self.eV2J         #J   # formation energy of self-interstitial
         self.E_v = inputdata.properties['E_f_v']     * self.eV2J         #J   # formation energy of vacancy 
@@ -957,7 +957,7 @@ class ss_model_M_C_screw:
 class Suzuki_model_RWASM_jog_T:
     
     def __init__(self,
-                adjustable_scalers,
+                adjustable_paras,
                 conditions,
                 comp_elements,
                 elements_data,
@@ -978,13 +978,13 @@ class Suzuki_model_RWASM_jog_T:
         self.Debye = 5 * 10**(12) # Debye frequency /s
         self.T_l = T_l
         #adjustables
-        self.rho = adjustable_scalers['dislocation_density']
-        self.tau_i_exponent = adjustable_scalers['tau_i_exponent']
-        self.trial_kappa_range = np.arange(adjustable_scalers['trial_kappa']['min'],
-                                          adjustable_scalers['trial_kappa']['max']+adjustable_scalers['trial_kappa']['inc'],
-                                          adjustable_scalers['trial_kappa']['inc'])
-        self.trial_tau_k = adjustable_scalers['trial_tau_k'] * 1e6
-        self.kink_width = adjustable_scalers['kink_width']
+        self.rho = adjustable_paras['dislocation_density']
+        self.tau_i_exponent = adjustable_paras['tau_i_exponent']
+        self.trial_kappa_range = np.arange(adjustable_paras['trial_kappa']['min'],
+                                          adjustable_paras['trial_kappa']['max']+adjustable_paras['trial_kappa']['inc'],
+                                          adjustable_paras['trial_kappa']['inc'])
+        self.trial_tau_k = adjustable_paras['trial_tau_k'] * 1e6
+        self.kink_width = adjustable_paras['kink_width']
 
     def L(self,kappa_i):
         y = 1- stats.norm.cdf(kappa_i)
@@ -1007,8 +1007,12 @@ class Suzuki_model_RWASM_jog_T:
             tau_j = (self.kT/(2*self.L(kappa_i)*self.b**2)) * np.log(st + np.sqrt(1+st**2) )
         else:
             self.jog = False
-            tau_j = (self.E_int + self.E_vac)/(4*self.b*self.L(kappa_i))
-
+            try:
+                tau_j = (self.E_int + self.E_vac)/(4*self.b*self.L(kappa_i))
+            except:
+                # Frank-Read Bowing is used
+                tau_j = (self.G*self.b)/(4*self.L(kappa_i))
+            
         return tau_j
     
     def tau_y_k_j(self,tau_k_trial,kappa_i_list):
@@ -1063,8 +1067,14 @@ class Suzuki_model_RWASM_jog_T:
                     # calculate the yield strength contribution for every element
                     # according to concentration
                     # setup properties for every element
-                    self.E_f_v = element_i['E_f_v'] * self.eV2J #J
-                    self.E_f_si = element_i['E_f_si'] * self.eV2J # J
+                    try:
+                        # if and if not E_f_v and E_f_si are not provided
+                        self.E_f_v = element_i['E_f_v'] * self.eV2J #J
+                        self.E_f_si = element_i['E_f_si'] * self.eV2J # J
+                    except:
+                        # for using the orowan
+                        self.E_f_v = '-'
+                        self.E_f_si = '-'
                     self.a_0 = element_i['a']*1e-10#element_i['a_0'] * 10**(-10) # unit: m
                     self.E_w_i = element_i['E_w_i'] * self.eV2J#element_i['E_w'] * self.eV2J # J
                     self.c = self.compositions[element_symbol][composition_idx]/100
@@ -1074,8 +1084,12 @@ class Suzuki_model_RWASM_jog_T:
                     self.a_p = self.a_0 * np.sqrt(2/3)
                     #self.E_vac = 0.6 * self.eV2J / 10**(-10) # test NbTiZr
                     #self.E_int = 0.9 * self.eV2J / 10**(-10) # test NbTiZr
-                    self.E_vac = 0.707 * self.E_f_v  /self.b + self.G * self.b**2 / (np.pi*(1-self.nu)) * np.log(1.5)
-                    self.E_int = 0.707 * self.E_f_si /self.b + self.G * self.b**2 / (np.pi*(1-self.nu)) * np.log(1.5)
+                    try:
+                        self.E_vac = 0.707 * self.E_f_v  /self.b + self.G * self.b**2 / (np.pi*(1-self.nu)) * np.log(1.5)
+                        self.E_int = 0.707 * self.E_f_si /self.b + self.G * self.b**2 / (np.pi*(1-self.nu)) * np.log(1.5)
+                    except:
+                        self.E_vac = '-'
+                        self.E_int = '-'
                     self.lambda_k = self.b * self.kink_width
 
                     # record the optimization results for post-processing
@@ -1129,7 +1143,11 @@ class Suzuki_model_RWASM_jog_T:
             self.tau_j_i_T_list = np.array(tau_j_i_T_list).transpose()
             self.jog_activated_T = (jog_activated_T)
             self.T_liquidus = np.array(T_liquidus)
-            self.T_liquidus[self.T_liquidus==1e8]=np.nan
+            if len(self.T_liquidus)>1:
+                self.T_liquidus[self.T_liquidus==1e8]=np.nan
+            else:
+                if self.T_liquidus[0]==1e8:
+                    self.T_liquidus[0]=np.nan
             # record data
             calc_data_comp_idx = {}
             for element_symbol in self.elements_data:
@@ -1186,13 +1204,13 @@ class Suzuki_model_RWASM_ternary:
         self.Debye = 5 * 10**(12) # Debye frequency /s
 
         #adjustables
-        self.rho = inputdata.adjustable_scalers['dislocation_density']
-        self.tau_i_exponent = inputdata.adjustable_scalers['tau_i_exponent']
-        self.trial_kappa_range = np.arange(inputdata.adjustable_scalers['trial_kappa']['min'],
-                                          inputdata.adjustable_scalers['trial_kappa']['max']+inputdata.adjustable_scalers['trial_kappa']['inc'],
-                                          inputdata.adjustable_scalers['trial_kappa']['inc'])
-        self.trial_tau_k = inputdata.adjustable_scalers['trial_tau_k'] * 1e6
-        self.kink_width = inputdata.adjustable_scalers['kink_width']
+        self.rho = inputdata.adjustable_paras['dislocation_density']
+        self.tau_i_exponent = inputdata.adjustable_paras['tau_i_exponent']
+        self.trial_kappa_range = np.arange(inputdata.adjustable_paras['trial_kappa']['min'],
+                                          inputdata.adjustable_paras['trial_kappa']['max']+inputdata.adjustable_paras['trial_kappa']['inc'],
+                                          inputdata.adjustable_paras['trial_kappa']['inc'])
+        self.trial_tau_k = inputdata.adjustable_paras['trial_tau_k'] * 1e6
+        self.kink_width = inputdata.adjustable_paras['kink_width']
 
         
         
@@ -1218,8 +1236,11 @@ class Suzuki_model_RWASM_ternary:
             tau_j = (self.kT/(2*self.L(kappa_i)*self.b**2)) * np.log(st + np.sqrt(1+st**2) )
         else:
             self.jog = False
-            tau_j = (self.E_int + self.E_vac)/(4*self.b*self.L(kappa_i))
-
+            try:
+                tau_j = (self.E_int + self.E_vac)/(4*self.b*self.L(kappa_i))
+            except:
+                # Frank-Read Bowing is used
+                tau_j = (self.G*self.b)/(4*self.L(kappa_i))
         return tau_j
     
     def tau_y_k_j(self,tau_k_trial,kappa_i_list):
@@ -1340,17 +1361,17 @@ class ss_model_M_C_screw_single:
     # similar to pseudo-ternary, but for single-composition calculations using c-weighted properties.
 
     def __init__(self,
-                 adjustable_scalers,
+                 adjustable_paras,
                   conditions, # conditions = [[list of T],strain_r]
                   compositions,  # dict
                   elements_data   # dict 
                 ):
         
         
-        # adjustable scalers
-        self.kink_width = adjustable_scalers['kink_width']  
-        self.Delta_V_p_scaler = adjustable_scalers['Delta_V_p_scaler']  
-        self.Delta_E_p_scaler = adjustable_scalers['Delta_E_p_scaler'] 
+        # adjustable paras
+        self.kink_width = adjustable_paras['kink_width']  
+        self.Delta_V_p_para = adjustable_paras['Delta_V_p_para']  
+        self.Delta_E_p_para = adjustable_paras['Delta_E_p_para'] 
         
         # some constants
         self.boltzmann_J = 1.38064852*10**(-23) #J/K
@@ -1384,8 +1405,8 @@ class ss_model_M_C_screw_single:
         self.E_k = sum(cn_E_k) * self.eV2J 
         self.E_v = sum(cn_E_v) * self.eV2J 
         self.E_si = sum(cn_E_si) * self.eV2J 
-        self.Delta_E_p = np.sqrt(sum(cn_Delta_E_p)) * self.Delta_E_p_scaler * self.eV2J 
-        self.Delta_V_p = sum(cn_Delta_V_p) * self.Delta_V_p_scaler * self.eV2J /self.b
+        self.Delta_E_p = np.sqrt(sum(cn_Delta_E_p)) * self.Delta_E_p_para * self.eV2J 
+        self.Delta_V_p = sum(cn_Delta_V_p) * self.Delta_V_p_para * self.eV2J /self.b
         
         # exp conditions
         self.T_range = conditions[0]

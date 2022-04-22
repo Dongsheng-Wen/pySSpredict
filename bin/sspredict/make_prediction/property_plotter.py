@@ -12,21 +12,25 @@ class plotter_2d:
     def __init__(self,
                  data,
                  X='T',
-                 Y='tau_y'):
+                 Y='tau_y',
+                 label='',
+                 ):
         self.ticks_font = font_manager.FontProperties(family='serif', style='normal',
                                          size=24, weight='normal', stretch='normal')
+        self.X_col = X 
+        self.Y_col = Y
         self.X = data[self.X_col]
         self.Y = data[self.Y_col]
         plt.draw()
         self.fig = plt.figure(figsize=(12,9))
-        self.ax = self.f.subplots(1,1)
+        self.ax = self.fig.subplots(1,1)
 
-        self.ax.plot(self.X,self.Y,'b-')
+        self.ax.plot(self.X,self.Y,'b-',label=label)
         self.ax.tick_params(direction='in',axis='both',length=10,right=True)
-        for labelx1 in (ax.get_xticklabels()):
+        for labelx1 in (self.ax.get_xticklabels()):
             labelx1.set_fontproperties(self.ticks_font)
     
-        for labely1 in (ax.get_yticklabels()):
+        for labely1 in (self.ax.get_yticklabels()):
             labely1.set_fontproperties(self.ticks_font)
 
         self.ax.set_xlabel(X,fontproperties=self.ticks_font)
@@ -42,7 +46,13 @@ class plotter_2d:
 # strength/property plotter -3d
 class pyss_plotter_3d:
 
-    def __init__(self,data,X='comp(psA)',Y='comp(psB)',Z='comp(psC)',H='tau_y',scale=100):
+    def __init__(self,data,
+        X='comp(psA)',
+        Y='comp(psB)',
+        Z='comp(psC)',
+        H='tau_y',
+        pd_data='',plot_tielines=False,num_tielines=1500,
+        scale=100):
 
         self.ticks_font = font_manager.FontProperties(family='serif', style='normal',
                                          size=24, weight='normal', stretch='normal')
@@ -70,10 +80,20 @@ class pyss_plotter_3d:
         self.tax.clear_matplotlib_ticks()
         self.tax.resize_drawing_canvas()
 
-        self.tax.boundary(linewidth=2.0)
+        self.tax.boundary(linewidth=2.5)
         self.tax.gridlines(color="blue", multiple=5)
         self.tax.ax.axis("equal")
         self.cmap='Wistia'
+        self.plot_tielines = plot_tielines
+        # ternary phase diagram 
+        self.pd_data = pd_data
+
+        try: 
+            self.pd_phase_boundaries = self.pd_data['phase_boundaries']
+            self.pd_tielines = self.pd_data['tielines']
+            self.pd_good = True 
+        except:
+            self.pd_good = False 
 
         fs = 24
         left_corner = self.Z_name
@@ -90,7 +110,17 @@ class pyss_plotter_3d:
         self.tax.bottom_axis_label(bottom_axis_label, fontsize=fs, offset=0.16)
         self.tax.ticks(axis='lbr', multiple=10, linewidth=1, offset=0.025,fontsize=fs)
 
-
+        # plot pd if good
+        if self.pd_good:
+            # phase bounaries 
+            for key in list(self.pd_phase_boundaries.keys()):
+                self.tax.plot(self.pd_phase_boundaries[key],linewidth=1,label=key)
+            # tielines
+            if self.plot_tielines:
+                tielines = self.GetSpacedElements(self.pd_tielines,num_tielines)
+                self.tax.plot(tielines, color='green', linewidth=0.1)
+        self.tax.legend(fontsize=12,loc='upper left')
+        # plot properties
         self.tax.heatmap(self.hm_dict,cmap=self.cmap,
             colorbar=False,vmin=self.vmin,vmax=self.vmax)
         self.h = self.tax.get_figure()
@@ -102,6 +132,27 @@ class pyss_plotter_3d:
         plt.close()
 
         
+    def add_phase_diagram(self,pd_data,num_tielines):
+
+        # ternary phase diagram 
+        self.pd_data = pd_data
+        try: 
+            self.pd_phase_boundaries = self.pd_data['phase_boundaries']
+            self.pd_tielines = self.pd_data['tielines']
+            self.pd_good = True 
+        except:
+            print('No phase data can be read.')
+            self.pd_good = False 
+        # plot pd if good
+        if self.pd_good:
+            # phase bounaries 
+            for key in list(self.pd_phase_boundaries.keys()):
+                self.tax.plot(self.pd_phase_boundaries[key],linewidth=1,label=key)
+            # tielines
+            if self.plot_tielines:
+                tielines = self.GetSpacedElements(self.pd_tielines,num_tielines)
+                self.tax.plot(tielines, color='green', linewidth=0.1)
+        self.tax.legend(fontsize=12,loc='upper left')
 
     def set_corner_labels(self,left_corner='Z',right_corner='X',top_corner='Y',fontsize=24):
 
@@ -122,4 +173,8 @@ class pyss_plotter_3d:
     def show(self):
         return self.tax.get_figure()
 
-
+    def GetSpacedElements(self,array, numElems = 10):
+        # select numElems in given array, evenly spaced
+        indices = np.round(np.linspace(0, len(array)-1, numElems)).astype(int)
+        out = [array[i] for i in indices]
+        return out

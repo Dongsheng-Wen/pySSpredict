@@ -40,7 +40,7 @@ class liquidus_wrapper:
     def save_data(self):
         self.data = self.comp_elements
         self.data['T_liquidus'] = self.T_liquidus 
-        fout_name = "".join([str(elem) for elem in lw.elements])+'_{}.csv'.format(self.tcdatabase)
+        fout_name = "".join([str(elem) for elem in self.elements])+'_{}_liquidus_T.csv'.format(self.tcdatabase)
         self.data.to_csv(fout_name,sep=',')
 
     def stop_server(self):

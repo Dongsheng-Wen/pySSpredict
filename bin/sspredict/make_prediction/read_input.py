@@ -268,7 +268,7 @@ class read_inputjson_edge_single_calculation:
                 self.alpha = self.data['model']['alpha']
             else:
                 self.alpha = 0.123
-        self.adjustable_scalers= [self.alpha,self.f1,self.f2]
+        self.adjustable_paras= [self.alpha,self.f1,self.f2]
         for element_i in self.elements_order:
             # compute E, nu, G for elements if not supplied
             # two of the E/nu/G must be supplied to calculate the missing one
@@ -351,8 +351,8 @@ class read_inputjson_BCC_screw_pseudo_ternary:
         self.psC_range = self.data['pseudo-ternary']['psC']['range']
         self.increment = self.data['pseudo-ternary']['increment']
         
-        # adjustable scalers
-        self.adjustable_scalers = self.data['adjustables']
+        # adjustable paras
+        self.adjustable_paras = self.data['adjustables']
         # exp conditions
         self.conditions = self.data['conditions']
 
@@ -376,8 +376,8 @@ class read_inputjson_BCC_screw_single_calculation:
         self.name = self.data["material"]
         # properties
         self.properties = self.data['properties']
-        # adjustable scalers
-        self.adjustable_scalers = self.data['adjustables']
+        # adjustable paras
+        self.adjustable_paras = self.data['adjustables']
         # exp conditions
         self.conditions = self.data['conditions']
         # output file
@@ -402,8 +402,8 @@ class read_json_Suzuki_model_RWASM_ternary:
         self.name = self.data["material"]
         # properties
         self.elements_data = self.data['elements']
-        # adjustable scalers
-        self.adjustable_scalers = self.data['adjustables']
+        # adjustable paras
+        self.adjustable_paras = self.data['adjustables']
         # exp conditions
         self.conditions = self.data['conditions']
         # output file
@@ -497,8 +497,8 @@ class read_json_Suzuki_model_RWASM_T:
                 except:
                     print('Not perform high-T jog-dragging calculation of {}={} because no liquidus temperature supplied.'.format(self.element_composition.columns.values,self.element_composition.iloc[i].values))
         self.T_l = np.nan_to_num(self.T_l,nan=1e8)
-        # adjustable scalers
-        self.adjustable_scalers = self.data['adjustables']
+        # adjustable paras
+        self.adjustable_paras = self.data['adjustables']
         
         # output file
         try: 
@@ -513,7 +513,7 @@ class make_adjustables:
 
     def __init__(self,models,
                         f1=None,f2=None,alpha=None, # edge models
-                        kink_width=None,Delta_V_p_scaler=None,Delta_E_p_scaler=None,# MC screw model
+                        kink_width=None,Delta_V_p_para=None,Delta_E_p_para=None,# MC screw model
                         tau_i_exponent=None,dislocation_density=None,trial_kappa=None,trial_tau_k=None # Suzuki screw model
                         ):
 
@@ -556,23 +556,23 @@ class make_adjustables:
         if "BCC_screw_Maresca-Curtin-2019" in self.ssmodels:
             print('Setting adjustable parameters of the model {}.'.format("BCC_screw_Maresca-Curtin-2019"))
             self.adjustables_MC_screw = {
-                "kink_width":10,      # kink width scaler, usually 10b to 20b, b=burgers vector
-                "Delta_V_p_scaler":1, # Peierls barrier scaler
-                "Delta_E_p_scaler":1  # solute-dislocation interaction energy scaler
+                "kink_width":10,      # kink width para, usually 10b to 20b, b=burgers vector
+                "Delta_V_p_para":1, # Peierls barrier para
+                "Delta_E_p_para":1  # solute-dislocation interaction energy para
                 }
             if kink_width is not None:
                 self.adjustables_MC_screw['kink_width'] = float(kink_width)
-            if Delta_V_p_scaler is not None:
-                self.adjustables_MC_screw['Delta_V_p_scaler'] = float(Delta_V_p_scaler)
-            if Delta_E_p_scaler is not None:
-                self.adjustables_MC_screw['Delta_E_p_scaler'] = float(Delta_E_p_scaler)
+            if Delta_V_p_para is not None:
+                self.adjustables_MC_screw['Delta_V_p_para'] = float(Delta_V_p_para)
+            if Delta_E_p_para is not None:
+                self.adjustables_MC_screw['Delta_E_p_para'] = float(Delta_E_p_para)
             print(self.adjustables_MC_screw)
             self.adjustables["BCC_screw_Maresca-Curtin-2019"] = self.adjustables_MC_screw
         # if using "BCC_screw_Suzuki_RWASM-2020"
         if "BCC_screw_Suzuki_RWASM-2020" in self.ssmodels:
             print('Setting adjustable parameters of the model {}.'.format("BCC_screw_Suzuki_RWASM-2020"))
             self.adjustables_SRWASM_screw = {
-                    "kink_width":10,        # kink width scaler, usually 10b to 20b, b=burgers vector
+                    "kink_width":10,        # kink width para, usually 10b to 20b, b=burgers vector
                     "tau_i_exponent":1,     # exponent for phenomenological summation of yield stresses of components, usually 0.9-1
                     "dislocation_density":4e13, # dislocation density 
                     "trial_kappa":{         # trial kappa range for optimization 
@@ -605,6 +605,7 @@ class get_elements_data:
         self.ssmodels = models 
         # read from file or from dictionary 
         if fh is not None: 
+            print('reading datafile {}.'.format(fh))
             try:
                 js = json.load(open(fh))
                 self.data = js['elements']
@@ -621,7 +622,7 @@ class get_elements_data:
         # setting up data for each selected model
         self.data_of_ssmodels = {}
         print('grab elemental data for prediction.')
-        print('reading datafile {}.'.format(fh))
+        
         if "FCC_Varvenne-Curtin-2016" in self.ssmodels:
             print('Setting elemental data of the model {}.'.format("FCC_Varvenne-Curtin-2016"))
             # crystal data: Vn/a/b, structure
@@ -1001,16 +1002,23 @@ class get_elements_data:
                             except:
                                 elements_data[element_i]['a'] = np.cbrt(elements_data[element_i]['Vn']*2)
                                 elements_data[element_i]['b'] = elements_data[element_i]['a']*np.sqrt(3)/2
-                    # vacancy and self interstitial formation energy
-                    elements_data[element_i]['E_f_v'] = self.data[element_i_alias]['E_f_v']
-                    elements_data[element_i]['E_f_si'] = self.data[element_i_alias]['E_f_si']
+
                     # E_w_i: solute-dislocation interaction energy 
                     elements_data[element_i]['E_w_i'] = self.data[element_i_alias]['E_w_i']
+                    try:
+                        # vacancy and self interstitial formation energy
+                        elements_data[element_i]['E_f_v'] = self.data[element_i_alias]['E_f_v']
+                        elements_data[element_i]['E_f_si'] = self.data[element_i_alias]['E_f_si']
+                    except:
+                        # no formation energy of defects provided, use the Frank-Read bowing for tau_j
+                        elements_data[element_i]['E_f_v'] = '-'
+                        elements_data[element_i]['E_f_si'] = '-'
+                        print(' "E_f_v" "E_f_si" not provided, use Frank-Read bowing stress for tau_j.')
             except:
                 print('Failed to fetch data for {}'.format(elements))
                 print('Make sure data file contains: ')
                 print('1. "structure", \n'
                       '2. "Vn" or "a" or "b", and elastic moduli \n '
-                      '3. "E_f_v" "E_f_si" "E_w_i"  \n ')
+                      '3. "E_w_i"  \n ')
             self.data_of_ssmodels["BCC_screw_Suzuki_RWASM-2020"] = elements_data
         

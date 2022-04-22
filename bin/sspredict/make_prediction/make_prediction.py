@@ -80,7 +80,7 @@ class make_prediction:
             print('------------Use Suzuki-BCC-Screw Dislocation Model------------')
             input_data = read_json_Suzuki_model_RWASM_T(self.inputfilename)
             self.input_data = input_data
-            self.model = Suzuki_model_RWASM_jog_T(input_data.adjustable_scalers,
+            self.model = Suzuki_model_RWASM_jog_T(input_data.adjustable_paras,
                                         input_data.conditions,
                                         input_data.element_composition,
                                         input_data.elements_data,
