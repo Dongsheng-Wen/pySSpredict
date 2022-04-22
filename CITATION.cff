@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+  - family-names: Wen
+    given-names: Dongsheng
+  - family-names: Titus
+    given-names: Michael
+    orcid: https://orcid.org/0000-0003-4925-7248
+title: "pySSpredict: A python-based tool for predicting solid-solution strengthening"
+version: 1.1.0
