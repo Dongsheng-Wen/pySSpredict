@@ -601,7 +601,7 @@ class make_adjustables:
 
 class get_elements_data:
 
-    def __init__(self,elements,models,fh=None,from_dict=None,alias=None):
+    def __init__(self,elements,models,fh=None,from_dict=None,alias=None,averaging_scheme='default'):
         self.ssmodels = models 
         # read from file or from dictionary 
         if fh is not None: 
@@ -621,6 +621,7 @@ class get_elements_data:
         #print(self.data)
         # setting up data for each selected model
         self.data_of_ssmodels = {}
+        self.averaging_scheme=averaging_scheme 
         print('grab elemental data for prediction.')
         
         if "FCC_Varvenne-Curtin-2016" in self.ssmodels:
@@ -640,19 +641,25 @@ class get_elements_data:
                         element_i_alias = element_i
                     # first get elastic constants, 
                     # two of the E/nu/G must be supplied to compute the rest one
-                    try:
-                        elements_data[element_i]['nu'] = round(self.data[element_i_alias]['nu'],3)
-                    except:
-                        elements_data[element_i]['nu'] = round(self.data[element_i_alias]['E']/2/self.data[element_i_alias]['G'] - 1,3)
-                    try:
-                        elements_data[element_i]['G'] = round(self.data[element_i_alias]['G'],1)
-                    except:
-                        elements_data[element_i]['G'] = round(self.data[element_i_alias]['E']/2/(self.data[element_i_alias]['nu'] + 1),1)
-                    try:
-                        elements_data[element_i]['E'] = round(self.data[element_i_alias]['E'],1)
-                    except:
-                        elements_data[element_i]['E'] = round(self.data[element_i_alias]['G']*2*(self.data[element_i_alias]['nu'] + 1),1)
-                
+                    #### or supply the stiffness matrix + averaging scheme ----2022.10.21
+                    if self.averaging_scheme == 'default': 
+                        try:
+                            elements_data[element_i]['nu'] = round(self.data[element_i_alias]['nu'],3)
+                        except:
+                            elements_data[element_i]['nu'] = round(self.data[element_i_alias]['E']/2/self.data[element_i_alias]['G'] - 1,3)
+                        try:
+                            elements_data[element_i]['G'] = round(self.data[element_i_alias]['G'],1)
+                        except:
+                            elements_data[element_i]['G'] = round(self.data[element_i_alias]['E']/2/(self.data[element_i_alias]['nu'] + 1),1)
+                        try:
+                            elements_data[element_i]['E'] = round(self.data[element_i_alias]['E'],1)
+                        except:
+                            elements_data[element_i]['E'] = round(self.data[element_i_alias]['G']*2*(self.data[element_i_alias]['nu'] + 1),1)
+                    else: 
+                        # get the stiffness matrix 6x6
+                        elements_data[element_i]['Cij'] = np.round(np.array(self.data[element_i_alias]['Cij']),2)
+                        elements_data['averaging_scheme'] = self.averaging_scheme
+
                     if self.data[element_i_alias]['structure'] == 'fcc':
                         # fcc: Vn = a^3/4, b = a/sqrt(2)
                         if 'Vn' in self.data[element_i_alias]:
@@ -718,7 +725,7 @@ class get_elements_data:
                 print('Make sure data file contains: ')
                 print('1. "structure", \n'
                       '2. "Vn" or "a" or "b",  \n '
-                      '3. "E" "G" "nu"  \n ')
+                      '3. "E" "G" "nu"  or "Cij" \n ')
             self.data_of_ssmodels["FCC_Varvenne-Curtin-2016"] = elements_data
         # if using "BCC_edge_Maresca-Curtin-2019"
         if "BCC_edge_Maresca-Curtin-2019" in self.ssmodels:
@@ -738,19 +745,25 @@ class get_elements_data:
                     elements_data[element_i] = {}
                     # first get elastic constants, 
                     # two of the E/nu/G must be supplied to compute the rest one
-                    try:
-                        elements_data[element_i]['nu'] = round(self.data[element_i_alias]['nu'],3)
-                    except:
-                        elements_data[element_i]['nu'] = round(self.data[element_i_alias]['E']/2/self.data[element_i_alias]['G'] - 1,3)
-                    try:
-                        elements_data[element_i]['G'] = round(self.data[element_i_alias]['G'],1)
-                    except:
-                        elements_data[element_i]['G'] = round(self.data[element_i_alias]['E']/2/(self.data[element_i_alias]['nu'] + 1),1)
-                    try:
-                        elements_data[element_i]['E'] = round(self.data[element_i_alias]['E'],1)
-                    except:
-                        elements_data[element_i]['E'] = round(self.data[element_i_alias]['G']*2*(self.data[element_i_alias]['nu'] + 1),1)
-                
+                    #### or supply the stiffness matrix + averaging scheme ----2022.10.21
+                    if self.averaging_scheme == 'default': 
+                        try:
+                            elements_data[element_i]['nu'] = round(self.data[element_i_alias]['nu'],3)
+                        except:
+                            elements_data[element_i]['nu'] = round(self.data[element_i_alias]['E']/2/self.data[element_i_alias]['G'] - 1,3)
+                        try:
+                            elements_data[element_i]['G'] = round(self.data[element_i_alias]['G'],1)
+                        except:
+                            elements_data[element_i]['G'] = round(self.data[element_i_alias]['E']/2/(self.data[element_i_alias]['nu'] + 1),1)
+                        try:
+                            elements_data[element_i]['E'] = round(self.data[element_i_alias]['E'],1)
+                        except:
+                            elements_data[element_i]['E'] = round(self.data[element_i_alias]['G']*2*(self.data[element_i_alias]['nu'] + 1),1)
+                    else: 
+                        # get the stiffness matrix 6x6
+                        elements_data[element_i]['Cij'] = np.round(np.array(self.data[element_i_alias]['Cij']),2)
+                        elements_data['averaging_scheme'] = self.averaging_scheme
+                        
                     if self.data[element_i_alias]['structure'] == 'fcc':
                         # fcc: Vn = a^3/4, b = a/sqrt(2)
                         if 'Vn' in self.data[element_i_alias]:
@@ -816,7 +829,7 @@ class get_elements_data:
                 print('Make sure data file contains: ')
                 print('1. "structure", \n'
                       '2. "Vn" or "a" or "b",  \n '
-                      '3. "E" "G" "nu"  \n ')
+                      '3. "E" "G" "nu" or "Cij" \n ')
             self.data_of_ssmodels["BCC_edge_Maresca-Curtin-2019"] = elements_data
         # if using "BCC_screw_Maresca-Curtin-2019"
         if "BCC_screw_Maresca-Curtin-2019" in self.ssmodels:
@@ -930,18 +943,26 @@ class get_elements_data:
                     else:
                         element_i_alias = element_i
                     elements_data[element_i] = {}
-                    try:
-                        elements_data[element_i]['nu'] = round(self.data[element_i_alias]['nu'],3)
-                    except:
-                        elements_data[element_i]['nu'] = round(self.data[element_i_alias]['E']/2/self.data[element_i_alias]['G'] - 1,3)
-                    try:
-                        elements_data[element_i]['G'] = round(self.data[element_i_alias]['G'],1)
-                    except:
-                        elements_data[element_i]['G'] = round(self.data[element_i_alias]['E']/2/(self.data[element_i_alias]['nu'] + 1),1)
-                    try:
-                        elements_data[element_i]['E'] = round(self.data[element_i_alias]['E'],1)
-                    except:
-                        elements_data[element_i]['E'] = round(self.data[element_i_alias]['G']*2*(self.data[element_i_alias]['nu'] + 1),1)
+                    # first get elastic constants, 
+                    # two of the E/nu/G must be supplied to compute the rest one
+                    #### or supply the stiffness matrix + averaging scheme ----2022.10.21
+                    if self.averaging_scheme == 'default': 
+                        try:
+                            elements_data[element_i]['nu'] = round(self.data[element_i_alias]['nu'],3)
+                        except:
+                            elements_data[element_i]['nu'] = round(self.data[element_i_alias]['E']/2/self.data[element_i_alias]['G'] - 1,3)
+                        try:
+                            elements_data[element_i]['G'] = round(self.data[element_i_alias]['G'],1)
+                        except:
+                            elements_data[element_i]['G'] = round(self.data[element_i_alias]['E']/2/(self.data[element_i_alias]['nu'] + 1),1)
+                        try:
+                            elements_data[element_i]['E'] = round(self.data[element_i_alias]['E'],1)
+                        except:
+                            elements_data[element_i]['E'] = round(self.data[element_i_alias]['G']*2*(self.data[element_i_alias]['nu'] + 1),1)
+                    else: 
+                        # get the stiffness matrix 6x6
+                        elements_data[element_i]['Cij'] = np.round(np.array(self.data[element_i_alias]['Cij']),2)
+                        elements_data['averaging_scheme'] = self.averaging_scheme
 
                     if self.data[element_i_alias]['structure'] == 'fcc':
                         # fcc: Vn = a^3/4, b = a/sqrt(2)

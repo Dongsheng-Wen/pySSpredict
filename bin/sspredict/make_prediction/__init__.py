@@ -5,3 +5,4 @@ from .input_format import input_format
 from .make_prediction import make_prediction
 from .make_composition import * 
 from .models import *
+from .htp_tools import *

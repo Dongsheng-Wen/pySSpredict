@@ -1,11 +1,18 @@
 import os
-os.environ['TC20A_HOME'] = '/apps/cent7/thermocalc/2020a'
+os.environ['TC21A_HOME'] = '/apps/cent7/thermocalc/2021a'
 os.environ['LSHOST']='mooring.ecn.purdue.edu'
-from tc_python import *
+try:
+    from tc_python import *
+except:
+    print('cannot import TCPython')
 import numpy as np
 import pandas as pd 
 import json
-start_api_server()
+import time 
+try:
+    start_api_server()
+except:
+    pass 
 class ternary_isothermal_pd:
     # inspired by pyTCPlotter 
     # now should work for ternary alloys
@@ -74,6 +81,68 @@ class ternary_isothermal_pd:
         stop_api_server() 
 
 
+class single_point_isothermo: 
+    # some codes copy from tc_python_plotter.py 
 
+    def __init__(self,
+        temperature = None,
+        tcdatabase="TCHEA4"):
 
+        start_api_server()
+        self.temp = temperature
+        self.tcdatabase = tcdatabase
+    def set_system(self,Setup_TC,comp):
+        # comp: dict; example: {"A":0.4, "B":0.4, "C":0.2}
+        self.comp = comp 
+        self.elements = [e for e in comp.keys()]
+        
+        self.system = Setup_TC.select_database_and_elements(self.tcdatabase,self.elements).get_system()
+        self.calculator = self.system.with_single_equilibrium_calculation()
+        self.calculator_1 = self.system.with_single_equilibrium_calculation()
+        self.calculator_2 = self.system.with_single_equilibrium_calculation()
+        self.calculator_3 = self.system.with_single_equilibrium_calculation()
+        self.calculator_4 = self.system.with_single_equilibrium_calculation()
+        self.calculator_5 = self.system.with_single_equilibrium_calculation()
+        self.calculator_6 = self.system.with_single_equilibrium_calculation()
+        self.calculator_7 = self.system.with_single_equilibrium_calculation()
+        self.calculator_8 = self.system.with_single_equilibrium_calculation()
+        self.calculator_9 = self.system.with_single_equilibrium_calculation()
+                
+    def set_tcdatabase(self,tcdatabase="TCHEA4"):
+        self.tcdatabase = tcdatabase
 
+    def set_comp(self,comp=None):
+        # this is different from set_system()
+        # this set composition only 
+        # save lots of time loading the TC database
+        
+        if comp is not None: 
+            self.comp = comp 
+        i=1
+        for ele in self.comp:
+            if i < len(self.comp):
+                self.calculator.set_condition(ThermodynamicQuantity.mole_fraction_of_a_component(ele), 
+                    self.comp[ele])
+                i+=1
+            else:
+                pass 
+    def set_temperature(self,temperature):
+        print('Set up single point calculation at {}K'.format(self.temp))
+        self.temp = temperature # Kelvin 
+
+    def calculate(self):
+        # most of the codes from pyTCPlotter make_ternary_diagram
+        self.stable_phases = {}
+        try:
+            self.calculator.set_condition(ThermodynamicQuantity.temperature(),self.temp)
+            self.SE_result = self.calculator.calculate()
+            phases = self.SE_result.get_stable_phases()
+            for i in range(len(phases)):
+                self.stable_phases[str(int(i+1))] = phases[i]
+            #self.SE_result.invalidate()
+        except:
+            print('cannot calculate, pass...')
+        self.calculator = self.system.with_single_equilibrium_calculation()
+
+    def stop_server(self):
+        stop_api_server() 

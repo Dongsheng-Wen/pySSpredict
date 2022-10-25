@@ -7,11 +7,11 @@ except:
     from .read_input import *
     from .models import *
 
-
+import json 
 
 class single_calc_strength:
 
-    def __init__(self,comp={},modelname=[]):
+    def __init__(self,comp={},modelname=[],import_calc_data_all=None):
 
         self.comp = {}
         self.temp = np.array([300.])
@@ -23,12 +23,23 @@ class single_calc_strength:
         self.T_l = None
         self.calc_data = []
         self.ssmodels = []
-        self.calc_data_all = None
+        self.calc_data_all = import_calc_data_all
         self.all_elements = []
         self.ssmodels_all = ["FCC_Varvenne-Curtin-2016",
                             "BCC_edge_Maresca-Curtin-2019",
                             "BCC_screw_Maresca-Curtin-2019",
                             "BCC_screw_Suzuki_RWASM-2020"]
+        self.averaging_scheme = "default" 
+    def set_averaging_scheme(self,method_name):
+        # available: Voigt, None
+        available_methods = ['default','voigt']
+        
+        if method_name in available_methods:
+            print('set averaging method for elastic constants: {}'.format(method_name))
+            self.averaging_scheme = method_name
+        else: 
+            print('The specified method is not available.')
+            print('Use one from the available methods: {}'.format(available_methods))
 
     def set_comp(self,comp,alias=None,remove_T_l=True):
         # parameter: alloy composition
@@ -89,7 +100,7 @@ class single_calc_strength:
         if len(self.ssmodels)!=0:
             # self.data_of_ssmodels: type = dict 
             # key = model name, value = dictionary containing elemental data for that model. 
-            self.data_handle = get_elements_data(self.elements,self.ssmodels,fh=jsfh,from_dict=from_dict,alias=self.alias)
+            self.data_handle = get_elements_data(self.elements,self.ssmodels,fh=jsfh,from_dict=from_dict,alias=self.alias,averaging_scheme=self.averaging_scheme)
             self.data_of_ssmodels = self.data_handle.data_of_ssmodels
             
         else:
@@ -128,7 +139,7 @@ class single_calc_strength:
                         )
         self.adjustables = adjustables_hd.adjustables
 
-    def calculate(self):
+    def calculate(self,stable_phases=None):
         if self.calc_data_all is not None:
             self.calc_data = [self.calc_data_all]
         compositions = pd.DataFrame(data=self.comp,index=[0]) * 100 # x100 because model functions take 0-100 at.%
@@ -146,7 +157,7 @@ class single_calc_strength:
                 model_core = ss_edge_model_T(adjustables, # dislocation related parameters
                                     self.conditions, # exp_conditions = [[list of T],strain_r]
                                     compositions, # pd.df 
-                                    elements_data, # dict 
+                                    elements_data, # dict # include averaging scheme
                                     structure      # 'fcc' or 'bcc'
                                     ) 
             elif (ssmodel == 'BCC_edge_Maresca-Curtin-2019') and self.check_data(ssmodel=ssmodel): 
@@ -188,6 +199,11 @@ class single_calc_strength:
                 res['model'] = ssmodel
                 res['adjustables'] = str(adjustables)
                 res['structure'] = structure
+                if stable_phases is not None: 
+                    phase_dict = json.loads(stable_phases.replace('\'','"'))
+                    num_phases = len(phase_dict)
+                    res['stable_phases'] = stable_phases
+                    res['num_stable_phases'] = num_phases
                 self.calc_data.append(res)
             else:
                 print('NO Calculation Performed. Check your data -> {}.'.format(ssmodel))
@@ -251,7 +267,7 @@ class single_calc_strength:
         if ssmodel is None:
             for ssmodel in self.ssmodels:
                 data_check = self.data_of_ssmodels[ssmodel]
-                if len(data_check) == len(self.elements):
+                if len(data_check) >= len(self.elements):
                     for element in self.elements:
                         if not data_check[element]:
                             print('No data for {}. Make sure to have the relevant data for using the model -> {}.'.format(
@@ -262,7 +278,7 @@ class single_calc_strength:
                     data_ok = False
         else: 
             data_check = self.data_of_ssmodels[ssmodel]
-            if len(data_check) == len(self.elements):
+            if len(data_check) >= len(self.elements):
                 for element in self.elements:
                     if not data_check[element]:
                         data_ok = False

@@ -5,6 +5,24 @@ from scipy import stats
 import copy
 import scipy.optimize as optimize
 import scipy.integrate as integrate
+class averaging_scheme:
+    def __init__(self,Cij,method_name='voigt'):
+        self.Cij = Cij 
+        self.method_name = method_name
+
+    def voigt_method(self):
+        # 
+        mu_voigt = (self.Cij[0][0]-self.Cij[0][1]+3*self.Cij[3][3])/5
+        k_avg =( self.Cij[0][0]+2*self.Cij[0][1])/3
+        nu_voigt = (3*k_avg - 2*mu_voigt)/(2*(3*k_avg+mu_voigt))
+        E_voigt = self.Cij[0][0]
+
+        return mu_voigt, nu_voigt, E_voigt 
+
+    def calc(self):
+        if self.method_name == 'voigt':
+            mu, nu, E = self.voigt_method()
+        return mu, nu, E 
 
 class ss_edge_model_T:
 # calculate solid solution strengthening contribution for FCC/BCC CCAs
@@ -43,22 +61,30 @@ class ss_edge_model_T:
         self.compositions_all = comp_elements #pandas df
         self.elements_data = copy.deepcopy(elements_data) #json
         
-        # convert unit for properties
-        # Vn: Å^3 to m^3
-        # b: Å to m
-        # a: Å to m
-        # E: GPa to Pa
-        # G: GPa to Pa
-        
+
         for element_i in self.elements_order:
             self.elements_data[element_i]['Vn'] = elements_data[element_i]['Vn']*10**(-30)
             self.elements_data[element_i]['b'] = elements_data[element_i]['b']*10**(-10)
             self.elements_data[element_i]['a'] = elements_data[element_i]['a']*10**(-10)
-            self.elements_data[element_i]['E'] = elements_data[element_i]['E']*10**(9)
-            self.elements_data[element_i]['G'] = elements_data[element_i]['G']*10**(9)
-
+        # averaging method
+        self.averaging_scheme = self.elements_data['averaging_scheme']
+        print(self.averaging_scheme)
+        if self.averaging_scheme == 'default':
+            # convert unit for properties
+            # Vn: Å^3 to m^3
+            # b: Å to m
+            # a: Å to m
+            # E: GPa to Pa
+            # G: GPa to Pa
+            
+            for element_i in self.elements_order:
+                self.elements_data[element_i]['E'] = elements_data[element_i]['E']*10**(9)
+                self.elements_data[element_i]['G'] = elements_data[element_i]['G']*10**(9)
+        else: 
+            for element_i in self.elements_order:
+                self.elements_data[element_i]['Cij'] = elements_data[element_i]['Cij']*10**(9)
         
-        
+        print(self.elements_data)
         self.structure = structure
     
     def change_elements_data(self,elements_data):
@@ -67,10 +93,14 @@ class ss_edge_model_T:
             self.elements_data[element_i]['Vn'] = elements_data[element_i]['Vn']*10**(-30)
             self.elements_data[element_i]['b'] = elements_data[element_i]['b']*10**(-10)
             self.elements_data[element_i]['a'] = elements_data[element_i]['a']*10**(-10)
-            self.elements_data[element_i]['E'] = elements_data[element_i]['E']*10**(9)
-            self.elements_data[element_i]['G'] = elements_data[element_i]['G']*10**(9)
-
-
+        if self.averaging_scheme == 'default':
+            for element_i in self.elements_order:
+                self.elements_data[element_i]['E'] = elements_data[element_i]['E']*10**(9)
+                self.elements_data[element_i]['G'] = elements_data[element_i]['G']*10**(9)
+        else: 
+            for element_i in self.elements_order:
+                self.elements_data[element_i]['Cij'] = elements_data[element_i]['Cij']*10**(9)
+        
     def FCC_V_L_G_C_2016_analytical(self):
         # FCC model: Varvenne-Leyson-Ghazisaeidi-Curtin 2016: http://dx.doi.org/10.1016/j.actamat.2016.09.046
         
@@ -83,18 +113,34 @@ class ss_edge_model_T:
         cn_G = []
         cn_b = []
         cn_E = []
+        
         for element_i in self.elements_order:
             cn_Vn.append(self.compositions[element_i]/100*self.elements_data[element_i]['Vn'])
-            cn_nu.append(self.compositions[element_i]/100*self.elements_data[element_i]['nu'])
-            cn_G.append(self.compositions[element_i]/100*self.elements_data[element_i]['G'])
             cn_b.append(self.compositions[element_i]/100*self.elements_data[element_i]['b'])
-            cn_E.append(self.compositions[element_i]/100*self.elements_data[element_i]['E'])
-
-        self.aver_E = sum(cn_E);
         self.aver_V = sum(cn_Vn);
-        self.aver_G = sum(cn_G)
-        self.aver_Nu = sum(cn_nu)
         self.aver_b = sum(cn_b)
+
+        if self.averaging_scheme=='default':
+            for element_i in self.elements_order:
+                cn_nu.append(self.compositions[element_i]/100*self.elements_data[element_i]['nu'])
+                cn_G.append(self.compositions[element_i]/100*self.elements_data[element_i]['G'])
+                cn_E.append(self.compositions[element_i]/100*self.elements_data[element_i]['E'])
+            self.aver_E = sum(cn_E);
+            self.aver_G = sum(cn_G)
+            self.aver_Nu = sum(cn_nu)
+        else: 
+            aver_Cij = 0
+            for element_i in self.elements_order:
+                aver_Cij+=self.compositions[element_i]/100*self.elements_data[element_i]['Cij']
+                # 6x6 matrix 
+            average_function = averaging_scheme(aver_Cij,method_name=self.averaging_scheme)
+            mu, nu, E = average_function.calc()
+            self.aver_E = E
+            self.aver_G = mu
+            self.aver_Nu = nu 
+        
+        
+
         
         i = 0;cn_Delta_Vn2=[]
         for element_i in self.elements_order:
@@ -128,16 +174,28 @@ class ss_edge_model_T:
         cn_E = []
         for element_i in self.elements_order:
             cn_Vn.append(self.compositions[element_i]/100*self.elements_data[element_i]['Vn'])
-            cn_nu.append(self.compositions[element_i]/100*self.elements_data[element_i]['nu'])
-            cn_G.append(self.compositions[element_i]/100*self.elements_data[element_i]['G'])
             cn_b.append(self.compositions[element_i]/100*self.elements_data[element_i]['b'])
-            cn_E.append(self.compositions[element_i]/100*self.elements_data[element_i]['E'])
-
-        self.aver_E = sum(cn_E);
         self.aver_V = sum(cn_Vn);
-        self.aver_G = sum(cn_G)
-        self.aver_Nu = sum(cn_nu)
         self.aver_b = sum(cn_b)
+
+        if self.averaging_scheme=='default':
+            for element_i in self.elements_order:
+                cn_nu.append(self.compositions[element_i]/100*self.elements_data[element_i]['nu'])
+                cn_G.append(self.compositions[element_i]/100*self.elements_data[element_i]['G'])
+                cn_E.append(self.compositions[element_i]/100*self.elements_data[element_i]['E'])
+            self.aver_E = sum(cn_E);
+            self.aver_G = sum(cn_G)
+            self.aver_Nu = sum(cn_nu)
+        else: 
+            aver_Cij = 0
+            for element_i in self.elements_order:
+                aver_Cij+=self.compositions[element_i]/100*self.elements_data[element_i]['Cij']
+                # 6x6 matrix 
+            average_function = averaging_scheme(aver_Cij,method_name=self.averaging_scheme)
+            mu, nu, E = average_function.calc()
+            self.aver_E = E
+            self.aver_G = mu
+            self.aver_Nu = nu 
         
         i = 0;cn_Delta_Vn2=[]
         for element_i in self.elements_order:
@@ -1078,8 +1136,16 @@ class Suzuki_model_RWASM_jog_T:
                     self.a_0 = element_i['a']*1e-10#element_i['a_0'] * 10**(-10) # unit: m
                     self.E_w_i = element_i['E_w_i'] * self.eV2J#element_i['E_w'] * self.eV2J # J
                     self.c = self.compositions[element_symbol][composition_idx]/100
-                    self.G = element_i['G'] * 10**9 # Pa
-                    self.nu = element_i['nu']
+                    if self.elements_data['averaging_scheme']=='default':
+                        self.G = element_i['G'] * 10**9 # Pa
+                        self.nu = element_i['nu']
+                    else: 
+                        self.Cij = element_i['Cij']
+                        average_function = averaging_scheme(aver_Cij,method_name=self.averaging_scheme)
+                        mu, nu, E = average_function.calc()
+                        self.G = mu * 10**9
+                        self.nu = nu 
+                    
                     self.b = self.a_0 * np.sqrt(3) / 2
                     self.a_p = self.a_0 * np.sqrt(2/3)
                     #self.E_vac = 0.6 * self.eV2J / 10**(-10) # test NbTiZr
