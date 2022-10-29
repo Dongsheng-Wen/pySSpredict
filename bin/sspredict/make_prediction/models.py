@@ -67,7 +67,11 @@ class ss_edge_model_T:
             self.elements_data[element_i]['b'] = elements_data[element_i]['b']*10**(-10)
             self.elements_data[element_i]['a'] = elements_data[element_i]['a']*10**(-10)
         # averaging method
-        self.averaging_scheme = self.elements_data['averaging_scheme']
+        try:
+            self.averaging_scheme = self.elements_data['averaging_scheme']
+        except:
+            self.elements_data['averaging_scheme'] = 'default'
+            self.averaging_scheme = self.elements_data['averaging_scheme']
         print(self.averaging_scheme)
         if self.averaging_scheme == 'default':
             # convert unit for properties
