@@ -643,6 +643,7 @@ class get_elements_data:
                     # two of the E/nu/G must be supplied to compute the rest one
                     #### or supply the stiffness matrix + averaging scheme ----2022.10.21
                     if self.averaging_scheme == 'default': 
+                        elements_data['averaging_scheme'] = self.averaging_scheme
                         try:
                             elements_data[element_i]['nu'] = round(self.data[element_i_alias]['nu'],3)
                         except:
@@ -747,6 +748,7 @@ class get_elements_data:
                     # two of the E/nu/G must be supplied to compute the rest one
                     #### or supply the stiffness matrix + averaging scheme ----2022.10.21
                     if self.averaging_scheme == 'default': 
+                        elements_data['averaging_scheme'] = self.averaging_scheme
                         try:
                             elements_data[element_i]['nu'] = round(self.data[element_i_alias]['nu'],3)
                         except:
@@ -763,7 +765,7 @@ class get_elements_data:
                         # get the stiffness matrix 6x6
                         elements_data[element_i]['Cij'] = np.round(np.array(self.data[element_i_alias]['Cij']),2)
                         elements_data['averaging_scheme'] = self.averaging_scheme
-                        
+
                     if self.data[element_i_alias]['structure'] == 'fcc':
                         # fcc: Vn = a^3/4, b = a/sqrt(2)
                         if 'Vn' in self.data[element_i_alias]:
@@ -933,6 +935,7 @@ class get_elements_data:
             # 4. elastic constants G and nu
 
             elements_data = {}
+            elements_data['averaging_scheme'] = self.averaging_scheme
             try:
                 for element_i in elements: 
                     if alias is not None:
@@ -947,6 +950,7 @@ class get_elements_data:
                     # two of the E/nu/G must be supplied to compute the rest one
                     #### or supply the stiffness matrix + averaging scheme ----2022.10.21
                     if self.averaging_scheme == 'default': 
+                        #elements_data['averaging_scheme'] = self.averaging_scheme
                         try:
                             elements_data[element_i]['nu'] = round(self.data[element_i_alias]['nu'],3)
                         except:
@@ -962,7 +966,7 @@ class get_elements_data:
                     else: 
                         # get the stiffness matrix 6x6
                         elements_data[element_i]['Cij'] = np.round(np.array(self.data[element_i_alias]['Cij']),2)
-                        elements_data['averaging_scheme'] = self.averaging_scheme
+                        #elements_data['averaging_scheme'] = self.averaging_scheme
 
                     if self.data[element_i_alias]['structure'] == 'fcc':
                         # fcc: Vn = a^3/4, b = a/sqrt(2)

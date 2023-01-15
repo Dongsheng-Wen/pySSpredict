@@ -5,6 +5,7 @@ from scipy import stats
 import copy
 import scipy.optimize as optimize
 import scipy.integrate as integrate
+import json 
 class averaging_scheme:
     def __init__(self,Cij,method_name='voigt'):
         self.Cij = Cij 
@@ -1104,6 +1105,7 @@ class Suzuki_model_RWASM_jog_T:
         
     def calculate(self):
         calc_data_all = []
+        esymbol = [x for x in self.elements_data.keys() if x!="averaging_scheme"]
         for composition_idx in range(len(self.compositions)):
             self.composition_idx = composition_idx
             tau_y_tot_T = []
@@ -1111,7 +1113,7 @@ class Suzuki_model_RWASM_jog_T:
             tau_k_i_T_list = []
             tau_j_i_T_list = []
             self.elements_kappa_i_convergence_record = pd.DataFrame(data={})
-            for element_symbol in self.elements_data:
+            for element_symbol in esymbol:
                 self.elements_kappa_i_convergence_record[element_symbol] = {}
             jog_activated_T = []
             T_liquidus = []
@@ -1122,10 +1124,10 @@ class Suzuki_model_RWASM_jog_T:
                 tau_y_i = []
                 tau_k_i = []
                 tau_j_i = []
-
-                for element_symbol in self.elements_data:
+                
+                for element_symbol in esymbol:
                     element_i = self.elements_data[element_symbol]
-                    #print(element_i)
+                    #print(type(element_i))
                     # calculate the yield strength contribution for every element
                     # according to concentration
                     # setup properties for every element
@@ -1220,11 +1222,11 @@ class Suzuki_model_RWASM_jog_T:
                     self.T_liquidus[0]=np.nan
             # record data
             calc_data_comp_idx = {}
-            for element_symbol in self.elements_data:
+            for element_symbol in esymbol:
                 calc_data_comp_idx[element_symbol] = np.ones(len(self.T_range))*self.compositions[element_symbol][composition_idx]
             calc_data_comp_idx["T"] = self.T_range
             calc_data_comp_idx["tau_y"] = np.round(self.tau_y_tot_T,2)
-            for i, element_symbol in zip(range(len(self.elements_data)),self.elements_data):
+            for i, element_symbol in zip(range(len(esymbol)),esymbol):
                 calc_data_comp_idx["tau_y_"+str(element_symbol)] = np.round(self.tau_y_i_T_list[i],2)
                 calc_data_comp_idx["tau_k_"+str(element_symbol)] = np.round(self.tau_k_i_T_list[i],2)
                 calc_data_comp_idx["tau_j_"+str(element_symbol)] = np.round(self.tau_j_i_T_list[i],2)
