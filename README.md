@@ -4,7 +4,9 @@
 **pySSpredict** is a **Py**thon-based tool for **S**olid-solution **S**trengthening **predict**ion for complex-concentrated alloys. It can be easily installed on the high-throughput computation resources and integrated with TC-Python for desiging high-temperature high-strength structural materials. 
 
 ## Publications
-[Wen, D., Chang, C.H., Matsunaga, S., Park, G., Ecker, L., Gill, S.K., Topsakal, M., Okuniewski, M.A., Antonov, S., Johnson, D.R. and Titus, M.S., 2020. Structure and tensile properties of Mx (MnFeCoNi) 100-x solid solution strengthened high entropy alloys. Materialia, 9, p.100539.](https://doi.org/10.1016/j.mtla.2019.100539) 
+1. [Wen, D., Titus, M.S., 2023. pySSpredict: A python-based solid-solution strength prediction toolkit for complex concentrated alloys. Computational Materials Science.](https://doi.org/10.1016/j.commatsci.2022.111977)
+
+2. [Wen, D., Chang, C.H., Matsunaga, S., Park, G., Ecker, L., Gill, S.K., Topsakal, M., Okuniewski, M.A., Antonov, S., Johnson, D.R. and Titus, M.S., 2020. Structure and tensile properties of Mx (MnFeCoNi) 100-x solid solution strengthened high entropy alloys. Materialia, 9, p.100539.](https://doi.org/10.1016/j.mtla.2019.100539) 
 
 
 ## Models
