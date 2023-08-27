@@ -73,7 +73,7 @@ class ss_edge_model_T:
         except:
             self.elements_data['averaging_scheme'] = 'default'
             self.averaging_scheme = self.elements_data['averaging_scheme']
-        print(self.averaging_scheme)
+        #print(self.averaging_scheme)
         if self.averaging_scheme == 'default':
             # convert unit for properties
             # Vn: Å^3 to m^3
@@ -89,7 +89,7 @@ class ss_edge_model_T:
             for element_i in self.elements_order:
                 self.elements_data[element_i]['Cij'] = elements_data[element_i]['Cij']*10**(9)
         
-        print(self.elements_data)
+        #print(self.elements_data)
         self.structure = structure
     
     def change_elements_data(self,elements_data):

@@ -352,21 +352,21 @@ class ternary_calc_strength:
         if ssmodel is None:
             for ssmodel in self.ssmodels:
                 data_check = self.data_of_ssmodels[ssmodel]
-                if len(data_check) == len(self.elements):
+                try:
                     for element in self.elements:
                         if not data_check[element]:
                             print('No data for {}. Make sure to have the relevant data for using the model -> {}.'.format(
                                 element,ssmodel))
                             data_ok = False
-                else: 
+                except: 
                     print('Not sufficient data for model -> {}'.format(ssmodel))
                     data_ok = False
         else: 
             data_check = self.data_of_ssmodels[ssmodel]
-            if len(data_check) == len(self.elements):
+            try:
                 for element in self.elements:
                     if not data_check[element]:
                         data_ok = False
-            else: 
+            except: 
                 data_ok = False 
         return data_ok 
