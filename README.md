@@ -1,7 +1,7 @@
 # pySSpredict
 
 ## Description
-**pySSpredict** is a **Py**thon-based tool for **S**olid-solution **S**trengthening **predict**ion for complex-concentrated alloys. It can be easily installed on the high-throughput computation resources and integrated with TC-Python for desiging high-temperature high-strength structural materials. 
+**pySSpredict** is a **Py**thon-based tool for **S**olid-solution **S**trengthening **predict**ion for complex-concentrated alloys. It can be easily installed on the high-throughput computation resources and integrated with TC-Python for desiging high-temperature high-strength structural materials. Contact email: wen-dongsheng@alumni.purdue.edu. 
 
 ## Publications
 1. [Wen, D., Titus, M.S., 2023. pySSpredict: A python-based solid-solution strength prediction toolkit for complex concentrated alloys. Computational Materials Science.](https://doi.org/10.1016/j.commatsci.2022.111977)
